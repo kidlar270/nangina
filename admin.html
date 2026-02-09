@@ -1,1 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Nangina Girls Senior School</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+        :root {
+            --school-navy: #1e3a8a; 
+            --school-gold: #fbbf24;
+            --accent-blue: #3b82f6;
+            --bg-body: #f1f5f9;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 280px;
+            background: var(--school-navy);
+            color: white;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 3rem;
+            padding: 0 0.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            margin-left: 280px;
+            flex-grow: 1;
+            padding: 2rem 3rem;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-msg h1 { font-size: 1.75rem; color: var(--school-navy); }
+        .welcome-msg p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* --- Stats Row --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Admin Sections --- */
+        .admin-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* --- Form Styling --- */
+        .admin-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--school-navy);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        /* --- File Upload Area --- */
+        .file-dropzone {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .file-dropzone:hover {
+            border-color: var(--accent-blue);
+            background: #eff6ff;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* --- Action Buttons --- */
+        .btn-submit {
+            grid-column: span 2;
+            background: var(--school-navy);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1rem;
+            transition: opacity 0.3s;
+        }
+
+        .btn-submit:hover { opacity: 0.9; }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            color: var(--text-muted);
+        }
+
+        .btn-delete:hover {
+            background: #fef2f2;
+            color: var(--danger);
+        }
+
+        /* --- Tab Toggle --- */
+        .tab-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #eff6ff;
+            color: var(--accent-blue);
+            border-color: #dbeafe;
+        }
+
+        /* --- Custom Modal --- */
+        #deleteModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 2rem;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-confirm { background: var(--danger); color: white; border: none; }
+        .btn-cancel { background: white; color: var(--text-main); }
+
+        @media (max-width: 1024px) {
+            .sidebar { width: 80px; padding: 2rem 0.5rem; }
+            .admin-logo h2, .nav-item span { display: none; }
+            .main-content { margin-left: 80px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .admin-form { grid-template-columns: 1fr; }
+            .btn-submit { grid-column: auto; }
+            .form-group.full { grid-column: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="admin-logo">
+            <i data-lucide="shield-check" size="32" style="color: var(--school-gold);"></i>
+            <h2>ADMIN PORTAL</h2>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item active"><i data-lucide="layout-dashboard"></i> <span>Overview</span></div>
+            <div class="nav-item"><i data-lucide="users"></i> <span>Students</span></div>
+            <div class="nav-item"><i data-lucide="user-check"></i> <span>Teachers</span></div>
+            <div class="nav-item"><i data-lucide="lock"></i> <span>Admins</span></div>
+            <div class="nav-item"><i data-lucide="megaphone"></i> <span>Communication</span></div>
+            <div class="nav-item"><i data-lucide="settings"></i> <span>Settings</span></div>
+        </nav>
+        <div class="nav-item" style="margin-top: auto; color: #f87171;"><i data-lucide="log-out"></i> <span>Logout</span></div>
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="main-content">
+        <header class="header-bar">
+            <div class="welcome-msg">
+                <h1>School Management</h1>
+                <p>Register and manage Nangina Girls database records.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="text-align: right;">
+                    <p style="font-weight: 700; font-size: 0.9rem;">Administrator</p>
+                    <p style="font-size: 0.75rem; color: var(--text-muted);">Main Office</p>
+                </div>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--school-gold); display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--school-navy);">A</div>
+            </div>
+        </header>
+
+        <!-- Global Stats -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #eff6ff; color: #3b82f6;"><i data-lucide="users"></i></div>
+                <div>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Students</p>
+                    <h3 style="font-size: 1.5rem;" id="stat-students">0</h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #fdf2f8; color: #ec4899;"><i data-lucide="graduation-cap"></i></div>
+                <div>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Teachers</p>
+                    <h3 style="font-size: 1.5rem;" id="stat-teachers">0</h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #f0fdf4; color: #10b981;"><i data-lucide="shield"></i></div>
+                <div>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Admins</p>
+                    <h3 style="font-size: 1.5rem;" id="stat-admins">1</h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #fefce8; color: #ca8a04;"><i data-lucide="message-square"></i></div>
+                <div>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Notices Sent</p>
+                    <h3 style="font-size: 1.5rem;" id="stat-notices">0</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- Messaging & Reports Section -->
+        <section class="admin-card">
+            <div class="card-header">
+                <h2 style="font-size: 1.1rem; color: var(--school-navy);"><i data-lucide="send" style="vertical-align: middle; margin-right: 8px;"></i> Send Notices & Reports</h2>
+            </div>
+            
+            <form id="msgForm" class="admin-form" onsubmit="event.preventDefault(); handleNoticeSubmit();">
+                <div class="form-group">
+                    <label>Broadcast To</label>
+                    <select id="msg-target" required>
+                        <option value="all">All School</option>
+                        <option value="teachers">Teachers Only</option>
+                        <option value="students">Students Only</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Message Priority</label>
+                    <select id="msg-priority">
+                        <option value="normal">Normal</option>
+                        <option value="urgent">Urgent / Announcement</option>
+                        <option value="report">Official Report</option>
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label>Notice Heading / Subject</label>
+                    <input type="text" id="msg-subject" placeholder="e.g. End of Term Reporting Dates" required>
+                </div>
+                <div class="form-group full">
+                    <label>Message Content</label>
+                    <textarea id="msg-body" placeholder="Write your detailed report or message here..." required></textarea>
+                </div>
+                
+                <div class="form-group full">
+                    <label>Attachment / Image</label>
+                    <div class="file-dropzone" onclick="document.getElementById('img-upload').click()">
+                        <i data-lucide="image" size="32" style="color: var(--text-muted); margin-bottom: 8px;"></i>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Click to upload or drag image here</p>
+                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">PNG, JPG or PDF (Max 5MB)</p>
+                        <input type="file" id="img-upload" hidden accept="image/*" onchange="previewFile(this)">
+                        <img id="img-preview" class="preview-image" src="#" alt="Preview">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i data-lucide="send"></i> Broadcast Communication
+                </button>
+            </form>
+        </section>
+
+        <!-- Registration Form (Combined) -->
+        <section class="admin-card">
+            <div class="card-header">
+                <h2 style="font-size: 1.1rem; color: var(--school-navy);"><i data-lucide="user-plus" style="vertical-align: middle; margin-right: 8px;"></i> User Registration</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button class="tab-btn active" id="btnStudentForm" onclick="toggleFormType('student')">Student</button>
+                    <button class="tab-btn" id="btnTeacherForm" onclick="toggleFormType('teacher')">Teacher</button>
+                    <button class="tab-btn" id="btnAdminForm" onclick="toggleFormType('admin')">Admin</button>
+                </div>
+            </div>
+            
+            <form id="regForm" class="admin-form" onsubmit="event.preventDefault(); handleRegistration();">
+                <div class="form-group">
+                    <label id="lbl-name">Full Student Name</label>
+                    <input type="text" id="inp-name" placeholder="Enter full name" required>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-id">Admission Number</label>
+                    <input type="text" id="inp-id" placeholder="NG-XXXX" required>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-upi">UPI (Unique Personal Identifier)</label>
+                    <input type="text" id="inp-upi" placeholder="ABC-123-XYZ" required>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-phone">Guardian Phone Number</label>
+                    <input type="tel" id="inp-phone" placeholder="e.g. 0712 345 678" required>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-class">Class Level</label>
+                    <select id="inp-class" required>
+                        <option value="">Select Option</option>
+                        <option>Form 1</option>
+                        <option>Form 2</option>
+                        <option>Form 3</option>
+                        <option>Form 4</option>
+                    </select>
+                </div>
+                <div class="form-group" id="stream-group">
+                    <label>Stream</label>
+                    <select id="inp-stream">
+                        <option value="">Select Stream</option>
+                        <option>North</option>
+                        <option>South</option>
+                        <option>East</option>
+                        <option>West</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-email">Guardian Email</label>
+                    <input type="email" id="inp-email" placeholder="official@domain.com">
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i data-lucide="database"></i> Save Record
+                </button>
+            </form>
+        </section>
+
+        <!-- Directory Preview -->
+        <section class="admin-card">
+            <div class="card-header">
+                <h2 id="dir-title" style="font-size: 1.1rem; color: var(--school-navy);"><i data-lucide="table" style="vertical-align: middle; margin-right: 8px;"></i> Student Directory</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="tab-btn active" id="btnStudentDir" onclick="toggleDirectory('student')">Students</button>
+                    <button class="tab-btn" id="btnTeacherDir" onclick="toggleDirectory('teacher')">Teachers</button>
+                    <button class="tab-btn" id="btnAdminDir" onclick="toggleDirectory('admin')">Admins</button>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr id="table-head">
+                            <th>Name</th>
+                            <th>ID/Adm</th>
+                            <th>Class/Role</th>
+                            <th>Phone</th>
+                            <th>UPI/TSC</th>
+                            <th>Stream</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="directory-body">
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i data-lucide="folder-open" size="48" style="display: block; margin: 0 auto 1rem; opacity: 0.3;"></i>
+                                No records found. Start by adding data above.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal">
+        <div class="modal-content">
+            <div style="background: #fee2e2; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: var(--danger);">
+                <i data-lucide="alert-triangle" size="32"></i>
+            </div>
+            <h3 style="margin-bottom: 0.5rem;">Delete Record?</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Are you sure you want to remove <strong id="deleteTargetName">this record</strong>? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-modal btn-confirm" onclick="confirmDelete()">Delete Permanently</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        let currentFormType = 'student';
+        let currentDirType = 'student';
+        let pendingDeleteId = null;
+
+        function toggleFormType(type) {
+            currentFormType = type;
+            document.getElementById('btnStudentForm').classList.toggle('active', type === 'student');
+            document.getElementById('btnTeacherForm').classList.toggle('active', type === 'teacher');
+            document.getElementById('btnAdminForm').classList.toggle('active', type === 'admin');
+
+            const labels = {
+                student: { name: 'Full Student Name', id: 'Admission Number', class: 'Class Level', email: 'Guardian Email', phone: 'Guardian Phone Number', upi: 'UPI', classOptions: ['Form 1', 'Form 2', 'Form 3', 'Form 4'] },
+                teacher: { name: 'Full Teacher Name', id: 'TSC Number', class: 'Department', email: 'Professional Email', phone: 'Personal Phone Number', upi: 'National ID', classOptions: ['Mathematics', 'Sciences', 'Languages', 'Humanities', 'Technical'] },
+                admin: { name: 'Full Administrator Name', id: 'Staff Code', class: 'Access Level', email: 'System Email', phone: 'Emergency Contact', upi: 'Identity Token', classOptions: ['Super Admin', 'Standard Admin', 'Office Clerk', 'Accountant'] }
+            };
+
+            const config = labels[type];
+            document.getElementById('lbl-name').innerText = config.name;
+            document.getElementById('lbl-id').innerText = config.id;
+            document.getElementById('lbl-class').innerText = config.class;
+            document.getElementById('lbl-email').innerText = config.email;
+            document.getElementById('lbl-phone').innerText = config.phone;
+            document.getElementById('lbl-upi').innerText = config.upi;
+            
+            const classSelect = document.getElementById('inp-class');
+            classSelect.innerHTML = `<option value="">Select Option</option>` + 
+                config.classOptions.map(opt => `<option>${opt}</option>`).join('');
+
+            document.getElementById('stream-group').style.display = (type === 'student') ? 'flex' : 'none';
+        }
+
+        function handleRegistration() {
+            const name = document.getElementById('inp-name').value;
+            const tbody = document.getElementById('directory-body');
+            if (tbody.querySelector('.empty-state')) tbody.innerHTML = '';
+            
+            const tr = document.createElement('tr');
+            tr.id = 'row-' + Date.now();
+            
+            const idVal = document.getElementById('inp-id').value;
+            const classVal = document.getElementById('inp-class').value;
+            const phoneVal = document.getElementById('inp-phone').value;
+            const upiVal = document.getElementById('inp-upi').value;
+            const streamVal = document.getElementById('inp-stream').value || '-';
+
+            tr.innerHTML = `
+                <td style="font-weight: 600;">${name}</td>
+                <td>${idVal}</td>
+                <td>${classVal}</td>
+                <td>${phoneVal}</td>
+                <td>${upiVal}</td>
+                <td>${streamVal}</td>
+                <td style="text-align: right;">
+                    <button class="btn-icon btn-delete" onclick="openDeleteModal('${tr.id}', '${name}')">
+                        <i data-lucide="trash-2" size="18"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            
+            const statMap = { student: 'stat-students', teacher: 'stat-teachers', admin: 'stat-admins' };
+            const statElem = document.getElementById(statMap[currentFormType]);
+            statElem.innerText = parseInt(statElem.innerText) + 1;
+
+            lucide.createIcons();
+            document.getElementById('regForm').reset();
+            showToast(`${currentFormType.charAt(0).toUpperCase() + currentFormType.slice(1)} record saved!`);
+        }
+
+        function previewFile(input) {
+            const preview = document.getElementById('img-preview');
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = function () {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "";
+                preview.style.display = 'none';
+            }
+        }
+
+        function handleNoticeSubmit() {
+            const subject = document.getElementById('msg-subject').value;
+            const target = document.getElementById('msg-target').value;
+            
+            // Increment notice stat
+            const stat = document.getElementById('stat-notices');
+            stat.innerText = parseInt(stat.innerText) + 1;
+
+            showToast(`Notice broadcasted to ${target} successfully!`);
+            document.getElementById('msgForm').reset();
+            document.getElementById('img-preview').style.display = 'none';
+        }
+
+        function toggleDirectory(type) {
+            currentDirType = type;
+            document.getElementById('btnStudentDir').classList.toggle('active', type === 'student');
+            document.getElementById('btnTeacherDir').classList.toggle('active', type === 'teacher');
+            document.getElementById('btnAdminDir').classList.toggle('active', type === 'admin');
+            
+            const title = document.getElementById('dir-title');
+            const head = document.getElementById('table-head');
+            
+            if(type === 'admin') {
+                title.innerHTML = `<i data-lucide="shield" style="vertical-align: middle; margin-right: 8px;"></i> Admin Directory`;
+                head.innerHTML = `<th>Name</th><th>Staff Code</th><th>Access Level</th><th>Contact</th><th>Token ID</th><th>Email</th><th style="text-align: right;">Actions</th>`;
+            } else if(type === 'teacher') {
+                title.innerHTML = `<i data-lucide="user-check" style="vertical-align: middle; margin-right: 8px;"></i> Teacher Directory`;
+                head.innerHTML = `<th>Name</th><th>TSC No.</th><th>Department</th><th>Phone</th><th>National ID</th><th>Email</th><th style="text-align: right;">Actions</th>`;
+            } else {
+                title.innerHTML = `<i data-lucide="table" style="vertical-align: middle; margin-right: 8px;"></i> Student Directory`;
+                head.innerHTML = `<th>Name</th><th>Adm No.</th><th>Class</th><th>Phone</th><th>UPI</th><th>Stream</th><th style="text-align: right;">Actions</th>`;
+            }
+            lucide.createIcons();
+        }
+
+        function openDeleteModal(rowId, name) {
+            pendingDeleteId = rowId;
+            document.getElementById('deleteTargetName').innerText = name;
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            pendingDeleteId = null;
+        }
+
+        function confirmDelete() {
+            if (pendingDeleteId) {
+                const row = document.getElementById(pendingDeleteId);
+                if (row) row.remove();
+                
+                const tbody = document.getElementById('directory-body');
+                if (tbody.children.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><i data-lucide="folder-open" size="48" style="display: block; margin: 0 auto 1rem; opacity: 0.3;"></i>No records found.</td></tr>`;
+                    lucide.createIcons();
+                }
+            }
+            closeModal();
+        }
+
+        function showToast(message) {
+            const msg = document.createElement('div');
+            msg.style = "position: fixed; bottom: 20px; right: 20px; background: var(--success); color: white; padding: 12px 24px; border-radius: 8px; box-shadow: var(--shadow); z-index: 10000; font-weight: 600;";
+            msg.innerText = message;
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
