@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal | Nangina Girls Senior School</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --school-navy: #1e3a8a; 
+            --school-gold: #fbbf24;
+            --student-accent: #8b5cf6;
+            --bg-body: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- STYLISH ANIMATED LOADER --- */
+        #page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--school-navy);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .loader-exit {
+            transform: translateY(-100%);
+        }
+
+        .loader-content {
+            text-align: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .crest-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 2rem;
+        }
+
+        .crest-icon {
+            color: var(--school-gold);
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+
+        .spinner-ring {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid rgba(251, 191, 36, 0.1);
+            border-top: 2px solid var(--school-gold);
+            border-radius: 50%;
+            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+
+        .welcome-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #fff, var(--school-gold), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        .sub-text {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* --- Layout --- */
+        .navbar {
+            background: var(--surface);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--school-navy);
+            font-weight: 800;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        /* --- Content Cards --- */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: var(--school-navy);
+        }
+
+        /* --- Resource Downloads --- */
+        .resource-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            transition: background 0.2s;
+        }
+
+        .resource-item:hover {
+            background: #f8fafc;
+        }
+
+        .resource-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .resource-icon {
+            width: 36px;
+            height: 36px;
+            background: #f1f5f9;
+            color: var(--school-navy);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .download-btn {
+            background: var(--school-navy);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: opacity 0.2s;
+        }
+
+        .download-btn:hover {
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-muted);
+        }
+
+        /* --- Student Info --- */
+        .profile-card {
+            text-align: center;
+            background: linear-gradient(to bottom right, var(--school-navy), #1e40af);
+            color: white;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--school-gold);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--school-navy);
+            border: 4px solid rgba(255,255,255,0.2);
+        }
+
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Stylish Animated Loader -->
+    <div id="page-loader">
+        <div class="loader-content">
+            <div class="crest-wrapper">
+                <div class="spinner-ring"></div>
+                <i data-lucide="graduation-cap" class="crest-icon" size="100"></i>
+            </div>
+            <h1 class="welcome-text">Nangina Girls Senior</h1>
+            <p class="sub-text">Learning to Lead</p>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo-area">
+            <i data-lucide="book-open-check" style="color: var(--school-gold);"></i>
+            <span>STUDENT PORTAL</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div id="notif-bell" style="position: relative; cursor: pointer;">
+                <i data-lucide="bell" size="20"></i>
+                <span id="unread-count" style="position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 10px; display: none;">0</span>
+            </div>
+            <i data-lucide="menu" size="24" style="cursor: pointer;"></i>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Main Column -->
+        <section>
+            <!-- Announcements -->
+            <div class="card">
+                <div class="section-header">
+                    <h2 class="section-title"><i data-lucide="megaphone"></i> Student Bulletin</h2>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Recent communications</span>
+                </div>
+                
+                <div class="notice-list" id="student-notices">
+                    <div class="empty-state">
+                        <i data-lucide="smile" size="40" style="margin-bottom: 10px; opacity: 0.3;"></i>
+                        <p>No new announcements today.</p>
+                        <p style="font-size: 0.75rem;">Check back later for school updates!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Downloads -->
+            <div class="card">
+                <div class="section-header">
+                    <h2 class="section-title"><i data-lucide="file-down"></i> Academic Downloads</h2>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Exams & Assignments</span>
+                </div>
+                
+                <div class="resource-list" id="resources-container">
+                    <div class="empty-state" style="padding: 1.5rem 0;">
+                        <i data-lucide="folder-open" size="32" style="margin-bottom: 10px; opacity: 0.3;"></i>
+                        <p style="font-size: 0.85rem;">No files available for download yet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activities -->
+            <div class="card">
+                <div class="section-header">
+                    <h2 class="section-title"><i data-lucide="calendar"></i> Upcoming Activities</h2>
+                </div>
+                <div id="activities-container" class="empty-state" style="padding: 1rem 0;">
+                    <p style="font-size: 0.85rem;">No upcoming events scheduled.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sidebar Column -->
+        <aside>
+            <div class="card profile-card">
+                <div class="avatar" id="student-initials">?</div>
+                <h3 id="student-name">Loading...</h3>
+                <p id="student-details" style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 15px;">---</p>
+                <div style="display: flex; justify-content: space-around; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                    <div>
+                        <p style="font-size: 0.7rem; opacity: 0.7;">Term GPA</p>
+                        <p style="font-weight: 700;" id="stat-gpa">-</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.7rem; opacity: 0.7;">Attendance</p>
+                        <p style="font-weight: 700;" id="stat-attendance">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--school-navy);">Quick Links</h3>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <button style="width: 100%; padding: 10px; border: 1px solid var(--border-color); background: none; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
+                        <i data-lucide="file-text" size="16"></i> Term Results
+                    </button>
+                    <button style="width: 100%; padding: 10px; border: 1px solid var(--border-color); background: none; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
+                        <i data-lucide="clock" size="16"></i> Class Timetable
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Enhanced Loader logic
+        window.addEventListener('load', () => {
+            // Artificial delay to appreciate the animation
+            setTimeout(() => {
+                const loader = document.getElementById('page-loader');
+                loader.classList.add('loader-exit');
+            }, 2500);
+        });
+
+        // Function to update profile dynamically
+        function updateStudentProfile(data) {
+            if (data.name) {
+                document.getElementById('student-name').innerText = data.name;
+                document.getElementById('student-initials').innerText = data.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            }
+            if (data.class && data.adm) {
+                document.getElementById('student-details').innerText = `${data.class} | Adm: ${data.adm}`;
+            }
+            if (data.gpa) document.getElementById('stat-gpa').innerText = data.gpa;
+            if (data.attendance) document.getElementById('stat-attendance').innerText = data.attendance;
+        }
+
+        // Function to render academic resources
+        function addAcademicResource(resource) {
+            const container = document.getElementById('resources-container');
+            const empty = container.querySelector('.empty-state');
+            if (empty) empty.remove();
+
+            const item = document.createElement('div');
+            item.className = 'resource-item';
+            
+            const iconName = resource.type === 'exam' ? 'file-check' : 'clipboard-list';
+            
+            item.innerHTML = `
+                <div class="resource-info">
+                    <div class="resource-icon">
+                        <i data-lucide="${iconName}" size="18"></i>
+                    </div>
+                    <div>
+                        <p style="font-weight: 700; font-size: 0.9rem;">${resource.title}</p>
+                        <p style="font-size: 0.7rem; color: var(--text-muted);">${resource.subject || 'General'} | ${resource.date || 'Today'}</p>
+                    </div>
+                </div>
+                <button class="download-btn" onclick="window.open('${resource.url || '#'}')">
+                    <i data-lucide="download" size="14"></i> Download
+                </button>
+            `;
+            
+            container.prepend(item);
+            lucide.createIcons();
+        }
+
+        // Function to render a new notice
+        function receiveStudentNotice(data) {
+            const container = document.getElementById('student-notices');
+            const empty = container.querySelector('.empty-state');
+            if (empty) empty.remove();
+
+            const item = document.createElement('div');
+            item.className = `notice-item ${data.priority === 'urgent' ? 'urgent' : ''}`;
+            
+            item.innerHTML = `
+                <span class="notice-tag ${data.priority === 'urgent' ? 'tag-urgent' : 'tag-normal'}">
+                    ${data.priority || 'Update'}
+                </span>
+                <h4 class="notice-title">${data.subject}</h4>
+                <p class="notice-excerpt">${data.body}</p>
+                <div class="notice-meta">
+                    <span><i data-lucide="user" size="12"></i> ${data.sender || 'Admin'}</span>
+                    <span><i data-lucide="calendar" size="12"></i> ${new Date().toLocaleDateString()}</span>
+                </div>
+                ${data.image ? `<img src="${data.image}" style="width: 100%; border-radius: 8px; margin-top: 10px;">` : ''}
+            `;
+            
+            container.prepend(item);
+            lucide.createIcons();
+
+            const badge = document.getElementById('unread-count');
+            badge.style.display = 'block';
+            badge.innerText = parseInt(badge.innerText || 0) + 1;
+        }
+    </script>
+</body>
+</html>
