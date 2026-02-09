@@ -6,6 +6,10 @@
     <title>Student Portal | Nangina Girls Senior School</title>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js" type="module"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
@@ -39,8 +43,8 @@
             overflow-x: hidden;
         }
 
-        /* --- STYLISH ANIMATED LOADER --- */
-        #page-loader {
+        /* --- STYLISH ANIMATED LOADERS --- */
+        #page-loader, #exit-loader {
             position: fixed;
             top: 0;
             left: 0;
@@ -53,6 +57,14 @@
             justify-content: center;
             z-index: 10000;
             transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        #exit-loader {
+            transform: translateY(100%); /* Start off-screen at bottom */
+        }
+
+        #exit-loader.active {
+            transform: translateY(0);
         }
 
         .loader-exit {
@@ -128,7 +140,7 @@
         /* --- Layout --- */
         .navbar {
             background: var(--surface);
-            padding: 1rem 2rem;
+            padding: 0.75rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -144,6 +156,33 @@
             gap: 10px;
             color: var(--school-navy);
             font-weight: 800;
+            cursor: pointer;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .signout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fee2e2;
+            color: var(--danger);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .signout-btn:hover {
+            background: var(--danger);
+            color: white;
         }
 
         .container {
@@ -162,6 +201,7 @@
             padding: 1.5rem;
             box-shadow: var(--shadow);
             margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
         }
 
         .section-header {
@@ -178,6 +218,34 @@
             font-weight: 700;
             color: var(--school-navy);
         }
+
+        /* --- Notice Styles --- */
+        .notice-item {
+            padding: 1rem;
+            border-left: 4px solid var(--school-navy);
+            background: #f1f5f9;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .notice-item.urgent {
+            border-left-color: var(--danger);
+            background: #fef2f2;
+        }
+        .notice-tag {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        .tag-urgent { background: var(--danger); color: white; }
+        .tag-normal { background: var(--school-navy); color: white; }
+        .notice-title { font-weight: 700; margin-bottom: 5px; }
+        .notice-excerpt { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+        .notice-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 10px; display: flex; gap: 15px; }
 
         /* --- Resource Downloads --- */
         .resource-list {
@@ -232,21 +300,12 @@
             transition: opacity 0.2s;
         }
 
-        .download-btn:hover {
-            opacity: 0.9;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem 0;
-            color: var(--text-muted);
-        }
-
-        /* --- Student Info --- */
+        /* --- Sidebar Column --- */
         .profile-card {
             text-align: center;
             background: linear-gradient(to bottom right, var(--school-navy), #1e40af);
             color: white;
+            border: none;
         }
 
         .avatar {
@@ -264,6 +323,33 @@
             border: 4px solid rgba(255,255,255,0.2);
         }
 
+        /* Admin Modal */
+        #admin-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-body {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            border-radius: 15px;
+        }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; }
+        input, select, textarea {
+            width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;
+        }
+        .btn-primary { background: var(--school-navy); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+        .btn-cancel { background: #f1f5f9; color: var(--text-main); border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+
+        .empty-state { text-align: center; padding: 3rem 0; color: var(--text-muted); }
+
         @media (max-width: 900px) {
             .container { grid-template-columns: 1fr; }
         }
@@ -271,7 +357,7 @@
 </head>
 <body>
 
-    <!-- Stylish Animated Loader -->
+    <!-- Animated Entry Loader -->
     <div id="page-loader">
         <div class="loader-content">
             <div class="crest-wrapper">
@@ -283,35 +369,72 @@
         </div>
     </div>
 
+    <!-- Animated Exit Loader -->
+    <div id="exit-loader">
+        <div class="loader-content">
+            <div class="crest-wrapper">
+                <div class="spinner-ring"></div>
+                <i data-lucide="shield-check" class="crest-icon" size="100"></i>
+            </div>
+            <h1 class="welcome-text">Safely Logging Out</h1>
+            <p class="sub-text">See you soon, Scholar</p>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="admin-modal">
+        <div class="modal-body">
+            <h2 style="margin-bottom: 1rem; color: var(--school-navy)">Admin Dashboard</h2>
+            <div class="form-group">
+                <label>Post Type</label>
+                <select id="post-type" onchange="toggleForm()">
+                    <option value="notice">Student Notice</option>
+                    <option value="resource">Academic File</option>
+                    <option value="activity">School Activity</option>
+                </select>
+            </div>
+            
+            <div id="form-content">
+                <!-- Dynamic form fields -->
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                <button class="btn-primary" id="save-post">Publish Update</button>
+                <button class="btn-cancel" onclick="toggleAdminModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <nav class="navbar">
-        <div class="logo-area">
+        <div class="logo-area" onclick="toggleAdminModal()">
             <i data-lucide="book-open-check" style="color: var(--school-gold);"></i>
             <span>STUDENT PORTAL</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="nav-actions">
             <div id="notif-bell" style="position: relative; cursor: pointer;">
-                <i data-lucide="bell" size="20"></i>
+                <i data-lucide="bell" size="20" style="color: var(--school-navy);"></i>
                 <span id="unread-count" style="position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 10px; display: none;">0</span>
             </div>
-            <i data-lucide="menu" size="24" style="cursor: pointer;"></i>
+            <button class="signout-btn" id="signout-trigger">
+                <i data-lucide="log-out" size="18"></i>
+                Sign Out
+            </button>
         </div>
     </nav>
 
     <div class="container">
         <!-- Main Column -->
-        <section>
+        <main>
             <!-- Announcements -->
             <div class="card">
                 <div class="section-header">
                     <h2 class="section-title"><i data-lucide="megaphone"></i> Student Bulletin</h2>
                     <span style="font-size: 0.8rem; color: var(--text-muted);">Recent communications</span>
                 </div>
-                
                 <div class="notice-list" id="student-notices">
                     <div class="empty-state">
-                        <i data-lucide="smile" size="40" style="margin-bottom: 10px; opacity: 0.3;"></i>
-                        <p>No new announcements today.</p>
-                        <p style="font-size: 0.75rem;">Check back later for school updates!</p>
+                        <i data-lucide="inbox" size="40" style="margin-bottom: 10px; opacity: 0.3;"></i>
+                        <p>No new announcements.</p>
                     </div>
                 </div>
             </div>
@@ -320,13 +443,11 @@
             <div class="card">
                 <div class="section-header">
                     <h2 class="section-title"><i data-lucide="file-down"></i> Academic Downloads</h2>
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Exams & Assignments</span>
                 </div>
-                
                 <div class="resource-list" id="resources-container">
-                    <div class="empty-state" style="padding: 1.5rem 0;">
+                    <div class="empty-state">
                         <i data-lucide="folder-open" size="32" style="margin-bottom: 10px; opacity: 0.3;"></i>
-                        <p style="font-size: 0.85rem;">No files available for download yet.</p>
+                        <p>No files uploaded yet.</p>
                     </div>
                 </div>
             </div>
@@ -336,128 +457,264 @@
                 <div class="section-header">
                     <h2 class="section-title"><i data-lucide="calendar"></i> Upcoming Activities</h2>
                 </div>
-                <div id="activities-container" class="empty-state" style="padding: 1rem 0;">
-                    <p style="font-size: 0.85rem;">No upcoming events scheduled.</p>
+                <div id="activities-container">
+                    <div class="empty-state">
+                        <p>No upcoming events.</p>
+                    </div>
                 </div>
             </div>
-        </section>
+        </main>
 
-        <!-- Sidebar Column -->
+        <!-- Sidebar -->
         <aside>
             <div class="card profile-card">
-                <div class="avatar" id="student-initials">?</div>
-                <h3 id="student-name">Loading...</h3>
-                <p id="student-details" style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 15px;">---</p>
+                <div class="avatar" id="student-initials">SJ</div>
+                <h3 id="student-name">Sarah Jane</h3>
+                <p id="student-details" style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 15px;">Form 4 East | Adm: 5542</p>
                 <div style="display: flex; justify-content: space-around; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
                     <div>
                         <p style="font-size: 0.7rem; opacity: 0.7;">Term GPA</p>
-                        <p style="font-weight: 700;" id="stat-gpa">-</p>
+                        <p style="font-weight: 700;">3.8</p>
                     </div>
                     <div>
                         <p style="font-size: 0.7rem; opacity: 0.7;">Attendance</p>
-                        <p style="font-weight: 700;" id="stat-attendance">-</p>
+                        <p style="font-weight: 700;">94%</p>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--school-navy);">Quick Links</h3>
+                <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--school-navy);">Portal Navigation</h3>
                 <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <button style="width: 100%; padding: 10px; border: 1px solid var(--border-color); background: none; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
-                        <i data-lucide="file-text" size="16"></i> Term Results
+                    <button class="nav-btn" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); background: none; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
+                        <i data-lucide="layout-dashboard" size="16"></i> Main Dashboard
                     </button>
-                    <button style="width: 100%; padding: 10px; border: 1px solid var(--border-color); background: none; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
-                        <i data-lucide="clock" size="16"></i> Class Timetable
+                    <button class="nav-btn" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); background: none; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
+                        <i data-lucide="file-text" size="16"></i> Academic Performance
+                    </button>
+                    <button class="nav-btn" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); background: none; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
+                        <i data-lucide="clock" size="16"></i> Daily Timetable
                     </button>
                 </div>
             </div>
         </aside>
     </div>
 
-    <script>
-        lucide.createIcons();
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot, orderBy, limit, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Enhanced Loader logic
-        window.addEventListener('load', () => {
-            // Artificial delay to appreciate the animation
-            setTimeout(() => {
-                const loader = document.getElementById('page-loader');
-                loader.classList.add('loader-exit');
-            }, 2500);
-        });
+        // Global Config
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'nangina-portal';
 
-        // Function to update profile dynamically
-        function updateStudentProfile(data) {
-            if (data.name) {
-                document.getElementById('student-name').innerText = data.name;
-                document.getElementById('student-initials').innerText = data.name.split(' ').map(n => n[0]).join('').toUpperCase();
-            }
-            if (data.class && data.adm) {
-                document.getElementById('student-details').innerText = `${data.class} | Adm: ${data.adm}`;
-            }
-            if (data.gpa) document.getElementById('stat-gpa').innerText = data.gpa;
-            if (data.attendance) document.getElementById('stat-attendance').innerText = data.attendance;
+        let currentUser = null;
+
+        // Initialize App
+        async function init() {
+            lucide.createIcons();
+            
+            // Stylish Sign Out Logic
+            document.getElementById('signout-trigger').onclick = async () => {
+                const exitLoader = document.getElementById('exit-loader');
+                
+                // Trigger the exit animation
+                exitLoader.classList.add('active');
+                
+                // Brief pause to let the user see the stylish exit
+                setTimeout(async () => {
+                    try {
+                        await signOut(auth);
+                        // Redirect simulation
+                        window.location.href = 'index.html';
+                    } catch (err) {
+                        console.error("Signout Error", err);
+                        exitLoader.classList.remove('active');
+                    }
+                }, 1800);
+            };
+
+            // Auth State Listener
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    setupSubscriptions();
+                    // Artificial delay for entry loader
+                    setTimeout(() => {
+                        document.getElementById('page-loader').classList.add('loader-exit');
+                    }, 1500);
+                } else {
+                    signInAnonymously(auth);
+                }
+            });
+
+            toggleForm(); 
         }
 
-        // Function to render academic resources
-        function addAcademicResource(resource) {
-            const container = document.getElementById('resources-container');
-            const empty = container.querySelector('.empty-state');
-            if (empty) empty.remove();
+        // --- Realtime Data Subscriptions ---
+        function setupSubscriptions() {
+            if (!currentUser) return;
 
-            const item = document.createElement('div');
-            item.className = 'resource-item';
-            
-            const iconName = resource.type === 'exam' ? 'file-check' : 'clipboard-list';
-            
-            item.innerHTML = `
+            // 1. Notices Subscription
+            const noticesRef = collection(db, 'artifacts', appId, 'public', 'data', 'notices');
+            onSnapshot(noticesRef, (snapshot) => {
+                const container = document.getElementById('student-notices');
+                if (snapshot.empty) return;
+                
+                container.innerHTML = '';
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    renderNotice(data);
+                });
+            }, (err) => console.error("Notices error", err));
+
+            // 2. Resources Subscription
+            const resourcesRef = collection(db, 'artifacts', appId, 'public', 'data', 'resources');
+            onSnapshot(resourcesRef, (snapshot) => {
+                const container = document.getElementById('resources-container');
+                if (snapshot.empty) return;
+                
+                container.innerHTML = '';
+                snapshot.docs.forEach(doc => {
+                    renderResource(doc.data());
+                });
+            }, (err) => console.error("Resources error", err));
+
+            // 3. Activities Subscription
+            const activitiesRef = collection(db, 'artifacts', appId, 'public', 'data', 'activities');
+            onSnapshot(activitiesRef, (snapshot) => {
+                const container = document.getElementById('activities-container');
+                if (snapshot.empty) return;
+                
+                container.innerHTML = '';
+                snapshot.docs.forEach(doc => {
+                    renderActivity(doc.data());
+                });
+            }, (err) => console.error("Activities error", err));
+        }
+
+        // --- Render Helpers ---
+        function renderNotice(data) {
+            const container = document.getElementById('student-notices');
+            const div = document.createElement('div');
+            div.className = `notice-item ${data.priority === 'urgent' ? 'urgent' : ''}`;
+            div.innerHTML = `
+                <span class="notice-tag ${data.priority === 'urgent' ? 'tag-urgent' : 'tag-normal'}">${data.priority || 'Notice'}</span>
+                <h4 class="notice-title">${data.title}</h4>
+                <p class="notice-excerpt">${data.message}</p>
+                <div class="notice-meta">
+                    <span>Admin</span>
+                    <span>${data.date || 'Recent'}</span>
+                </div>
+            `;
+            container.prepend(div);
+        }
+
+        function renderResource(data) {
+            const container = document.getElementById('resources-container');
+            const div = document.createElement('div');
+            div.className = 'resource-item';
+            div.innerHTML = `
                 <div class="resource-info">
-                    <div class="resource-icon">
-                        <i data-lucide="${iconName}" size="18"></i>
+                    <div class="resource-icon"><i data-lucide="file-check"></i></div>
+                    <div>
+                        <p style="font-weight: 700; font-size: 0.9rem;">${data.title}</p>
+                        <p style="font-size: 0.7rem; color: var(--text-muted);">${data.subject}</p>
+                    </div>
+                </div>
+                <button class="download-btn" onclick="alert('Downloading...')"><i data-lucide="download" size="14"></i> Get File</button>
+            `;
+            container.appendChild(div);
+            lucide.createIcons();
+        }
+
+        function renderActivity(data) {
+            const container = document.getElementById('activities-container');
+            const div = document.createElement('div');
+            div.style.padding = '12px';
+            div.style.borderBottom = '1px solid var(--border-color)';
+            div.innerHTML = `
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <div style="background: var(--school-gold); color: var(--school-navy); padding: 5px 10px; border-radius: 8px; text-align: center; min-width: 50px;">
+                        <span style="display: block; font-size: 0.6rem; font-weight: 800; text-transform: uppercase;">${data.month || 'JUL'}</span>
+                        <span style="display: block; font-size: 1.1rem; font-weight: 800;">${data.day || '15'}</span>
                     </div>
                     <div>
-                        <p style="font-weight: 700; font-size: 0.9rem;">${resource.title}</p>
-                        <p style="font-size: 0.7rem; color: var(--text-muted);">${resource.subject || 'General'} | ${resource.date || 'Today'}</p>
+                        <h4 style="font-size: 0.9rem; font-weight: 700;">${data.title}</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">${data.time || 'All Day'}</p>
                     </div>
                 </div>
-                <button class="download-btn" onclick="window.open('${resource.url || '#'}')">
-                    <i data-lucide="download" size="14"></i> Download
-                </button>
             `;
-            
-            container.prepend(item);
-            lucide.createIcons();
+            container.appendChild(div);
         }
 
-        // Function to render a new notice
-        function receiveStudentNotice(data) {
-            const container = document.getElementById('student-notices');
-            const empty = container.querySelector('.empty-state');
-            if (empty) empty.remove();
+        // --- Admin Logic ---
+        window.toggleAdminModal = () => {
+            const modal = document.getElementById('admin-modal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        };
 
-            const item = document.createElement('div');
-            item.className = `notice-item ${data.priority === 'urgent' ? 'urgent' : ''}`;
+        window.toggleForm = () => {
+            const type = document.getElementById('post-type').value;
+            const content = document.getElementById('form-content');
             
-            item.innerHTML = `
-                <span class="notice-tag ${data.priority === 'urgent' ? 'tag-urgent' : 'tag-normal'}">
-                    ${data.priority || 'Update'}
-                </span>
-                <h4 class="notice-title">${data.subject}</h4>
-                <p class="notice-excerpt">${data.body}</p>
-                <div class="notice-meta">
-                    <span><i data-lucide="user" size="12"></i> ${data.sender || 'Admin'}</span>
-                    <span><i data-lucide="calendar" size="12"></i> ${new Date().toLocaleDateString()}</span>
-                </div>
-                ${data.image ? `<img src="${data.image}" style="width: 100%; border-radius: 8px; margin-top: 10px;">` : ''}
-            `;
-            
-            container.prepend(item);
-            lucide.createIcons();
+            if (type === 'notice') {
+                content.innerHTML = `
+                    <div class="form-group"><label>Title</label><input id="f-title" placeholder="School Holiday Update"></div>
+                    <div class="form-group"><label>Message</label><textarea id="f-msg" rows="3"></textarea></div>
+                    <div class="form-group"><label>Priority</label><select id="f-priority"><option value="normal">Normal</option><option value="urgent">Urgent</option></select></div>
+                `;
+            } else if (type === 'resource') {
+                content.innerHTML = `
+                    <div class="form-group"><label>Resource Name</label><input id="f-title" placeholder="Physics Paper 2 Mid-term"></div>
+                    <div class="form-group"><label>Subject</label><input id="f-subject" placeholder="Physics"></div>
+                `;
+            } else if (type === 'activity') {
+                content.innerHTML = `
+                    <div class="form-group"><label>Event Name</label><input id="f-title" placeholder="Inter-school Debate"></div>
+                    <div class="form-group"><label>Month (e.g., SEP)</label><input id="f-month" placeholder="SEP"></div>
+                    <div class="form-group"><label>Day</label><input id="f-day" placeholder="24"></div>
+                `;
+            }
+        };
 
-            const badge = document.getElementById('unread-count');
-            badge.style.display = 'block';
-            badge.innerText = parseInt(badge.innerText || 0) + 1;
-        }
+        document.getElementById('save-post').onclick = async () => {
+            if (!currentUser) return;
+            const type = document.getElementById('post-type').value;
+            const payload = {
+                createdAt: serverTimestamp(),
+                author: currentUser.uid
+            };
+
+            try {
+                if (type === 'notice') {
+                    payload.title = document.getElementById('f-title').value;
+                    payload.message = document.getElementById('f-msg').value;
+                    payload.priority = document.getElementById('f-priority').value;
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'notices'), payload);
+                } else if (type === 'resource') {
+                    payload.title = document.getElementById('f-title').value;
+                    payload.subject = document.getElementById('f-subject').value;
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'resources'), payload);
+                } else if (type === 'activity') {
+                    payload.title = document.getElementById('f-title').value;
+                    payload.month = document.getElementById('f-month').value;
+                    payload.day = document.getElementById('f-day').value;
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'activities'), payload);
+                }
+                
+                toggleAdminModal();
+            } catch (err) {
+                console.error("Save error", err);
+            }
+        };
+
+        // Start
+        window.onload = init;
     </script>
 </body>
 </html>
