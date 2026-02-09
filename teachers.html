@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard | Nangina Girls Senior School</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --school-navy: #1e3a8a; 
+            --school-gold: #fbbf24;
+            --accent-blue: #3b82f6;
+            --bg-body: #f1f5f9;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Loader Styles --- */
+        #page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--school-navy);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.6s ease, visibility 0.6s;
+        }
+
+        .loader-content {
+            text-align: center;
+            color: white;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--school-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        .welcome-phrase {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .school-name {
+            font-size: 0.9rem;
+            color: var(--school-gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0.5rem;
+            opacity: 0.8;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hide content until loaded */
+        .dashboard-wrapper {
+            display: flex;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .content-ready .dashboard-wrapper {
+            opacity: 1;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 280px;
+            background: var(--school-navy);
+            color: white;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .teacher-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 3rem;
+            padding: 0 0.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            margin-left: 280px;
+            flex-grow: 1;
+            padding: 2rem 3rem;
+            width: calc(100% - 280px);
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-msg h1 { font-size: 1.75rem; color: var(--school-navy); }
+        .welcome-msg p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* --- Notification Feed --- */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            color: var(--school-navy);
+        }
+
+        .notice-board {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .empty-state {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 4rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            box-shadow: var(--shadow);
+            border: 2px dashed var(--border-color);
+        }
+
+        /* --- Stats Row --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar { width: 80px; padding: 2rem 0.5rem; }
+            .teacher-logo h2, .nav-item span { display: none; }
+            .main-content { margin-left: 80px; width: calc(100% - 80px); }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Page Loader -->
+    <div id="page-loader">
+        <div class="loader-content">
+            <i data-lucide="graduation-cap" size="64" style="color: var(--school-gold); margin-bottom: 1rem;"></i>
+            <div class="loader-spinner"></div>
+            <p class="welcome-phrase">Welcome back, Educator</p>
+            <p class="school-name">Nangina Girls Senior School</p>
+        </div>
+    </div>
+
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="teacher-logo">
+                <i data-lucide="graduation-cap" size="32" style="color: var(--school-gold);"></i>
+                <h2>TEACHER PORTAL</h2>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item active"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></div>
+                <div class="nav-item"><i data-lucide="book-open"></i> <span>My Classes</span></div>
+                <div class="nav-item"><i data-lucide="clipboard-list"></i> <span>Attendance</span></div>
+                <div class="nav-item"><i data-lucide="file-text"></i> <span>Exams & Grading</span></div>
+                <div class="nav-item"><i data-lucide="megaphone"></i> <span>Notice Board</span></div>
+                <div class="nav-item"><i data-lucide="message-circle"></i> <span>Messages</span></div>
+            </nav>
+            <div class="nav-item" style="margin-top: auto; color: #f87171;"><i data-lucide="log-out"></i> <span>Logout</span></div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header-bar">
+                <div class="welcome-msg">
+                    <h1 id="teacher-name-title">Dashboard Overview</h1>
+                    <p id="teacher-dept-title">Nangina Girls Senior School</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="text-align: right;">
+                        <p style="font-weight: 700; font-size: 0.9rem;" id="user-display-name">User</p>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);" id="user-display-tsc">TSC: ---</p>
+                    </div>
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--school-navy); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white;" id="user-initials">?</div>
+                </div>
+            </header>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div style="background: #eff6ff; color: #3b82f6; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;"><i data-lucide="users"></i></div>
+                    <div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Current Students</p>
+                        <h3 style="font-size: 1.2rem;" id="stat-students">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div style="background: #fdf2f8; color: #ec4899; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;"><i data-lucide="clock"></i></div>
+                    <div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Next Lesson</p>
+                        <h3 style="font-size: 1.2rem;" id="stat-next-lesson">None Scheduled</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div style="background: #f0fdf4; color: #10b981; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;"><i data-lucide="bell"></i></div>
+                    <div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Unread Admin Notices</p>
+                        <h3 style="font-size: 1.2rem;" id="unread-count">0</h3>
+                    </div>
+                </div>
+            </section>
+
+            <h2 class="section-title"><i data-lucide="megaphone"></i> Administrative Notice Board</h2>
+            
+            <div class="notice-board" id="notices-container">
+                <div class="empty-state">
+                    <i data-lucide="inbox" size="48" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p style="font-weight: 600;">No active notices</p>
+                    <p style="font-size: 0.85rem; margin-top: 4px;">Important communications from administration will appear here.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        // Handle Page Loading
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('page-loader');
+            // Simulate a brief delay to show off the welcoming phrase
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+                document.body.classList.add('content-ready');
+            }, 1800);
+        });
+
+        // Function to dynamically update the teacher's profile
+        function updateProfile(data) {
+            if (data.name) {
+                document.getElementById('teacher-name-title').innerText = `Welcome, ${data.name}`;
+                document.getElementById('user-display-name').innerText = data.name;
+                const initials = data.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.getElementById('user-initials').innerText = initials;
+            }
+            if (data.dept) document.getElementById('teacher-dept-title').innerText = `Nangina Girls Senior School | ${data.dept}`;
+            if (data.tsc) document.getElementById('user-display-tsc').innerText = `TSC: ${data.tsc}`;
+        }
+
+        // Render notices (can be called by system)
+        function renderNotice(notice) {
+            const container = document.getElementById('notices-container');
+            const emptyState = container.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+
+            const article = document.createElement('article');
+            article.className = `notice-card ${notice.priority || ''}`;
+            
+            article.innerHTML = `
+                <div class="notice-header">
+                    <span class="badge badge-${notice.priority || 'normal'}">${notice.priority || 'Normal'}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">${notice.time || 'Just now'}</span>
+                </div>
+                <h3 class="notice-title">${notice.subject}</h3>
+                <div class="notice-meta">
+                    <span><i data-lucide="user" size="14" style="vertical-align: sub;"></i> ${notice.sender || 'Administration'}</span>
+                    <span><i data-lucide="calendar" size="14" style="vertical-align: sub;"></i> ${new Date().toLocaleDateString()}</span>
+                </div>
+                <p class="notice-body">${notice.body}</p>
+                ${notice.image ? `
+                <div class="notice-attachment">
+                    <img src="${notice.image}" class="attachment-preview" style="max-width: 100%; border-radius: 8px;">
+                </div>` : ''}
+            `;
+            container.prepend(article);
+            lucide.createIcons();
+            
+            const count = document.getElementById('unread-count');
+            count.innerText = parseInt(count.innerText) + 1;
+        }
+    </script>
+</body>
+</html>
