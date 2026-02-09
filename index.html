@@ -163,17 +163,7 @@
         .welcome-section { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
         .welcome-img { background: var(--border-color); border-radius: 30px; height: 500px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 
-        /* --- Academic Departments --- */
-        .dept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-        .dept-card { background: white; padding: 2.5rem; border-radius: 24px; border: 1px solid var(--border-color); transition: all 0.3s; }
-        .dept-card:hover { transform: translateY(-5px); border-color: var(--school-gold); }
-
-        /* --- Timeline --- */
-        .timeline { margin-top: 3rem; }
-        .timeline-item { display: flex; gap: 2rem; margin-bottom: 2rem; }
-        .timeline-num { background: var(--school-navy); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 800; }
-
-        /* --- Portal --- */
+        /* --- Portal Overlay --- */
         .portal-overlay { 
             position: fixed; 
             inset: 0; 
@@ -256,28 +246,29 @@
             border-color: var(--school-gold);
         }
 
-        /* --- Coming Soon Notice --- */
-        #coming-soon-notice {
-            position: absolute;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.95);
+        .error-msg {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
             display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
             text-align: center;
-            padding: 2rem;
-            animation: fadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .login-loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            color: var(--school-gold);
         }
 
         @media (max-width: 768px) {
-            .welcome-section, .dept-grid, .stats-strip { grid-template-columns: 1fr; }
+            .welcome-section, .stats-strip { grid-template-columns: 1fr; }
             .hero-content h1 { font-size: 2.5rem; }
             .nav-links { display: none; }
         }
@@ -290,7 +281,7 @@
             <div class="logo-icon"><i data-lucide="graduation-cap"></i></div>
             <div>
                 <h2 style="font-size: 1rem; line-height: 1;">NANGINA GIRLS</h2>
-                <p style="font-size: 0.6rem; font-weight: 800; color: var(--accent-blue);">EXCELLENCE SINCE 1964</p>
+                <p style="font-size: 0.6rem; font-weight: 800; color: var(--accent-blue);">EXCELLENCE SINCE 1966</p>
             </div>
         </a>
         <ul class="nav-links">
@@ -326,164 +317,21 @@
         </div>
     </section>
 
-    <section id="about" class="welcome-section">
-        <div class="welcome-img">
-            <i data-lucide="image" size="48" style="opacity: 0.2;"></i>
-            <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; background: white; padding: 1rem; border-radius: 15px;">
-                <p style="font-weight: 800; font-size: 0.8rem; color: var(--school-navy);"> Chief Principal Judith Okanda</p>
-                <p style="font-size: 0.7rem;">M.Ed, B.Ed (Science)</p>
-            </div>
-        </div>
-        <div>
-            <span class="section-tag">Word from the Principal</span>
-            <h2 class="section-title">A Tradition of Academic Brilliance</h2>
-            <p>Welcome to St. Cecilia Nangina Girls. For over 60 years, we have stood as a beacon of hope and excellence in Busia County. Our philosophy is simple: we believe every girl has a unique potential that needs the right soil to bloom.</p>
-            <br>
-            <p>Our students don't just excel in national exams; they lead in the National Science Congress, dominate the Music Festival stages, and captain sports teams that compete at the regional level.</p>
-            <br>
-            <a href="#" class="btn btn-outline">Read Full Message <i data-lucide="chevron-right" size="16"></i></a>
-        </div>
-    </section>
-
-    <section id="departments" style="background: white;">
-        <div style="text-align: center; margin-bottom: 4rem;">
-            <span class="section-tag">Our Curriculum</span>
-            <h2 class="section-title">Academic Departments</h2>
-        </div>
-        <div class="dept-grid">
-            <div class="dept-card">
-                <div style="color: var(--accent-blue); margin-bottom: 1rem;"><i data-lucide="atom" size="32"></i></div>
-                <h3>STEM Center</h3>
-                <p>Physics, Chemistry, Biology, and Mathematics. Our modern labs are equipped for the 8-4-4 and new CBC pathways.</p>
-            </div>
-            <div class="dept-card">
-                <div style="color: var(--school-gold-dark); margin-bottom: 1rem;"><i data-lucide="languages" size="32"></i></div>
-                <h3>Humanities</h3>
-                <p>History, Geography, and C.R.E. We emphasize critical thinking and understanding our national heritage.</p>
-            </div>
-            <div class="dept-card">
-                <div style="color: var(--accent-blue); margin-bottom: 1rem;"><i data-lucide="palette" size="32"></i></div>
-                <h3>Creative Arts</h3>
-                <p>Home Science, Music, and Fine Art. We nurture talent that goes beyond the chalkboard.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="boarding">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
-            <div>
-                <span class="section-tag">Home away from Home</span>
-                <h2 class="section-title">Nurturing Growth in a Safe Environment</h2>
-                <ul style="list-style: none; display: grid; gap: 1.5rem;">
-                    <li style="display: flex; gap: 15px;">
-                        <i data-lucide="shield-check" style="color: #22c55e;"></i>
-                        <div><strong>24/7 Security:</strong> Gated campus with professional security and matron oversight.</div>
-                    </li>
-                    <li style="display: flex; gap: 15px;">
-                        <i data-lucide="utensils" style="color: #22c55e;"></i>
-                        <div><strong>Balanced Diet:</strong> Our kitchen provides nutritious meals catering to all students' needs.</div>
-                    </li>
-                    <li style="display: flex; gap: 15px;">
-                        <i data-lucide="heart-pulse" style="color: #22c55e;"></i>
-                        <div><strong>Sanitarium:</strong> On-site nurse and clinic for immediate medical attention.</div>
-                    </li>
-                </ul>
-            </div>
-            <div style="background: var(--school-navy); height: 400px; border-radius: 30px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.1);">
-                <i data-lucide="building-2" size="100"></i>
-            </div>
-        </div>
-    </section>
-
-    <section id="admissions" style="background: white;">
-        <div style="max-width: 800px;">
-            <span class="section-tag">Join Us</span>
-            <h2 class="section-title">Admission Process 2026</h2>
-            <p>We welcome applications from girls across the nation who are ready to embrace our culture of hard work and discipline.</p>
-            
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-num">1</div>
-                    <div>
-                        <h4>Online Inquiry</h4>
-                        <p>Fill out the digital inquiry form or visit our school office in Funyula.</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-num">2</div>
-                    <div>
-                        <h4>Placement Review</h4>
-                        <p>For Form 1, placement is done via the Ministry of Education NEMIS portal.</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-num">3</div>
-                    <div>
-                        <h4>Interview & Orientation</h4>
-                        <p>Successful candidates are invited for a campus visit and orientation with parents.</p>
-                    </div>
-                </div>
-            </div>
-            <button class="btn btn-primary" style="margin-top: 1rem;">Download Admission Package</button>
-        </div>
-    </section>
-
-    <footer style="background: #0f172a; color: white; padding: 5rem 8% 2rem;">
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; margin-bottom: 4rem;">
-            <div>
-                <h2 style="color: var(--school-gold); margin-bottom: 1.5rem;">NANGINA GIRLS</h2>
-                <p style="opacity: 0.6; font-size: 0.9rem;">Excellence since 1969. Knowledge is Power.</p>
-                <div style="display: flex; gap: 15px; margin-top: 2rem;">
-                    <i data-lucide="facebook"></i> <i data-lucide="twitter"></i> <i data-lucide="youtube"></i>
-                </div>
-            </div>
-            <div>
-                <h4 style="margin-bottom: 1.5rem;">Explore</h4>
-                <ul style="list-style: none; opacity: 0.6; font-size: 0.85rem; display: grid; gap: 10px;">
-                    <li>Alumni Portal</li>
-                    <li>Staff Directory</li>
-                    <li>School Fees</li>
-                    <li>Latest Results</li>
-                </ul>
-            </div>
-            <div>
-                <h4 style="margin-bottom: 1.5rem;">Contact</h4>
-                <p style="opacity: 0.6; font-size: 0.85rem;">P.O. Box 73-50406<br>Funyula, Busia<br>0722 000000</p>
-            </div>
-            <div>
-                <h4 style="margin-bottom: 1.5rem;">Newsletter</h4>
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" placeholder="Your Email" style="padding: 10px; border-radius: 5px; border: none; flex-grow: 1;">
-                    <button class="btn btn-primary" style="padding: 10px;">Join</button>
-                </div>
-            </div>
-        </div>
-        <div style="text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; font-size: 0.75rem; opacity: 0.4;">
-            &copy; 2026 St. Cecilia Nangina Girls Senior School. All rights reserved.
-        </div>
-    </footer>
-
     <!-- NEXUS PORTAL -->
     <div id="portal-view" class="portal-overlay">
         <div class="portal-card">
-            <!-- Coming Soon Display -->
-            <div id="coming-soon-notice">
-                <i data-lucide="construction" size="48" style="color: var(--school-gold); margin-bottom: 1.5rem;"></i>
-                <h2 style="color: white; margin-bottom: 0.5rem;">COMING SOON</h2>
-                <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 2rem;">The <span id="target-role">Portal</span> interface is currently being integrated with our national database.</p>
-                <button class="btn btn-outline" onclick="closeNotice()" style="color: white; border-color: rgba(255,255,255,0.2);">Return to Login</button>
-            </div>
-
             <div style="text-align: center; margin-bottom: 1.5rem;">
                 <h2 style="color: var(--school-gold); font-weight: 800; font-size: 1.75rem;">Nexus Command</h2>
                 <p style="opacity: 0.5; font-size: 0.85rem;">Secure Institutional Access</p>
             </div>
 
+            <div id="error-feedback" class="error-msg">Invalid credentials. Please try again.</div>
+
             <!-- Role Selector -->
             <div class="role-selector">
-                <div class="role-tab active" onclick="switchRole('student', this)">Student</div>
-                <div class="role-tab" onclick="switchRole('teacher', this)">Teacher</div>
-                <div class="role-tab" onclick="switchRole('admin', this)">Admin</div>
+                <div class="role-tab active" data-role="student" onclick="switchRole('student', this)">Student</div>
+                <div class="role-tab" data-role="teacher" onclick="switchRole('teacher', this)">Teacher</div>
+                <div class="role-tab" data-role="admin" onclick="switchRole('admin', this)">Admin</div>
             </div>
 
             <div style="display: grid; gap: 0.5rem;">
@@ -493,11 +341,16 @@
                 </div>
                 <div class="input-wrap">
                     <i data-lucide="lock" size="18"></i>
-                    <input type="password" class="portal-input" placeholder="Access Password">
+                    <input type="password" id="password-input" class="portal-input" placeholder="Access Password">
                 </div>
                 
-                <button class="btn btn-primary" onclick="handleLogin()" style="width: 100%; margin-top: 1rem; padding: 15px;">Authorize Login</button>
+                <button class="btn btn-primary" id="login-btn" onclick="handleLogin()" style="width: 100%; margin-top: 1rem; padding: 15px;">Authorize Login</button>
                 
+                <div id="login-loader" class="login-loading">
+                    <i data-lucide="loader-2" class="spin" size="18"></i>
+                    <span>Authenticating...</span>
+                </div>
+
                 <div style="text-align: center; margin-top: 1.5rem;">
                     <button onclick="togglePortal(false)" style="background: none; border: none; color: white; opacity: 0.4; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; margin: 0 auto;">
                         <i data-lucide="arrow-left" size="14"></i> Back to Public Site
@@ -513,39 +366,53 @@
 
         function togglePortal(show) {
             document.getElementById('portal-view').style.display = show ? 'flex' : 'none';
-            if (!show) closeNotice();
+            document.getElementById('error-feedback').style.display = 'none';
         }
 
         function switchRole(role, element) {
             currentRole = role;
-            // Update UI Tabs
             document.querySelectorAll('.role-tab').forEach(tab => tab.classList.remove('active'));
             element.classList.add('active');
-
-            // Update Placeholder text
+            
             const userInput = document.getElementById('username-input');
-            if (role === 'student') {
-                userInput.placeholder = "Admission Number";
-            } else if (role === 'teacher') {
-                userInput.placeholder = "TSC Number / Staff ID";
-            } else {
-                userInput.placeholder = "Admin Username";
-            }
+            if (role === 'student') userInput.placeholder = "Admission Number";
+            else if (role === 'teacher') userInput.placeholder = "TSC Number / Staff ID";
+            else userInput.placeholder = "Admin Username";
         }
 
         function handleLogin() {
-            const notice = document.getElementById('coming-soon-notice');
-            const targetText = document.getElementById('target-role');
-            
-            // Format role for display
-            targetText.innerText = currentRole.charAt(0).toUpperCase() + currentRole.slice(1) + " Portal";
-            
-            notice.style.display = 'flex';
-        }
+            const user = document.getElementById('username-input').value.trim();
+            const pass = document.getElementById('password-input').value.trim();
+            const error = document.getElementById('error-feedback');
+            const loader = document.getElementById('login-loader');
+            const btn = document.getElementById('login-btn');
 
-        function closeNotice() {
-            document.getElementById('coming-soon-notice').style.display = 'none';
+            // Simplified Mock Authentication
+            if (user === 'admin' && pass === 'admin') {
+                error.style.display = 'none';
+                btn.style.display = 'none';
+                loader.style.display = 'flex';
+
+                // Simulate redirect delay
+                setTimeout(() => {
+                    if (currentRole === 'student') {
+                        window.location.href = 'student.html';
+                    } else if (currentRole === 'teacher') {
+                        window.location.href = 'teachers.html';
+                    } else if (currentRole === 'admin') {
+                        window.location.href = 'admin.html';
+                    }
+                }, 1200);
+            } else {
+                error.style.display = 'block';
+                error.innerText = "Access Denied: Incorrect credentials.";
+            }
         }
     </script>
+
+    <style>
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
 </body>
 </html>
