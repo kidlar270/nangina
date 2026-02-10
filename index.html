@@ -18,7 +18,7 @@
             --text-main: #0f172a;
             --text-muted: #475569;
             --border-color: #e2e8f0;
-            --grad-primary: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            --grad-primary: linear-gradient(135deg, rgba(30, 58, 138, 0.85) 0%, rgba(30, 64, 175, 0.85) 100%);
             --grad-dark: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
             --radius-lg: 24px;
             --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
@@ -107,21 +107,66 @@
         }
 
         .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--school-navy); }
-        .logo-icon { background: var(--grad-primary); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
+        .logo-icon { background: var(--school-navy); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
         .nav-links { display: flex; gap: 1.5rem; list-style: none; }
         .nav-links a { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.9rem; transition: 0.3s; }
         .nav-links a:hover { color: var(--accent-blue); }
 
-        /* --- Hero --- */
+        /* --- Hero with Slideshow --- */
         .hero {
-            background: var(--grad-primary);
-            color: white;
-            min-height: 80vh;
+            height: 85vh;
             display: flex;
             align-items: center;
             position: relative;
             overflow: hidden;
+            color: white;
         }
+
+        .slideshow-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: var(--school-navy);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* Overlay to ensure text readability */
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--grad-primary);
+            z-index: 2;
+        }
+
+        .hero-content { 
+            max-width: 800px; 
+            position: relative; 
+            z-index: 3; 
+            padding: 0 8%;
+        }
+        
+        .hero-content h1 { font-size: 4rem; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 800; }
 
         .hero::after {
             content: '';
@@ -132,10 +177,8 @@
             height: 100px;
             background: var(--bg-body);
             transform: skewY(-2deg);
+            z-index: 4;
         }
-
-        .hero-content { max-width: 800px; position: relative; z-index: 2; }
-        .hero-content h1 { font-size: 4rem; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 800; }
 
         /* --- Stats --- */
         .stats-strip {
@@ -219,13 +262,20 @@
     </nav>
 
     <header class="hero">
+        <div class="slideshow-container">
+            <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2070&auto=format&fit=crop');"></div>
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1525921429624-479b6a26d84d?q=80&w=2070&auto=format&fit=crop');"></div>
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1525921429624-479b6a26d84d?q=80&w=2070&auto=format&fit=crop');"></div>
+        </div>
+        <div class="hero-overlay"></div>
+        
         <section class="hero-content">
-            <span class="section-tag" style="background: rgba(255,255,255,0.1); color: var(--school-gold);">Empowering the Girl Child</span>
+            <span class="section-tag" style="background: rgba(251, 191, 36, 0.2); color: var(--school-gold);">Empowering the Girl Child</span>
             <h1>Knowledge is Power, Integrity is Wealth.</h1>
-            <p style="font-size: 1.25rem; opacity: 0.9; margin-bottom: 2.5rem;">The premier National Girls' School in Funyula, dedicated to shaping tomorrow's leaders through academic rigor and spiritual discipline.</p>
+            <p style="font-size: 1.25rem; opacity: 0.9; margin-bottom: 2.5rem; max-width: 600px;">The premier National Girls' School in Funyula, dedicated to shaping tomorrow's leaders through academic rigor and spiritual discipline.</p>
             <div style="display: flex; gap: 1rem;">
                 <a href="#admissions" class="btn btn-primary">Admissions 2026</a>
-                <a href="#boarding" class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.3);">Explore Campus</a>
+                <a href="#boarding" class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.5);">Explore Campus</a>
             </div>
         </section>
     </header>
@@ -285,55 +335,6 @@
         </div>
     </section>
 
-    <section id="news">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem;">
-            <div>
-                <span class="section-tag">Updates</span>
-                <h2 class="section-title">Latest from Nangina</h2>
-            </div>
-            <button class="btn btn-outline">View Archive</button>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-            <div style="border-radius: 20px; overflow: hidden; background: white; border: 1px solid var(--border-color);">
-                <div style="height: 200px; background: #cbd5e1; display: flex; align-items: center; justify-content: center;"><i data-lucide="camera" size="48"></i></div>
-                <div style="padding: 1.5rem;">
-                    <p style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 800;">FEB 10, 2026</p>
-                    <h4 style="margin: 10px 0;">New ICT Lab Commissioned</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">The school has launched a state-of-the-art computer center with 50 high-end machines...</p>
-                </div>
-            </div>
-            <div style="border-radius: 20px; overflow: hidden; background: white; border: 1px solid var(--border-color);">
-                <div style="height: 200px; background: #cbd5e1; display: flex; align-items: center; justify-content: center;"><i data-lucide="trophy" size="48"></i></div>
-                <div style="padding: 1.5rem;">
-                    <p style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 800;">JAN 28, 2026</p>
-                    <h4 style="margin: 10px 0;">Regional Athletics Champions</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">Our track and field team swept the medals at the Busia County Inter-School games...</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="boarding" style="background: var(--grad-dark); color: white;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div style="height: 180px; background: rgba(255,255,255,0.05); border-radius: 20px;"></div>
-                <div style="height: 180px; background: rgba(255,255,255,0.05); border-radius: 20px; margin-top: 30px;"></div>
-                <div style="height: 180px; background: rgba(255,255,255,0.05); border-radius: 20px;"></div>
-                <div style="height: 180px; background: rgba(255,255,255,0.05); border-radius: 20px; margin-top: 30px;"></div>
-            </div>
-            <div>
-                <span class="section-tag" style="background: rgba(255,255,255,0.1); color: var(--school-gold);">Hostel Life</span>
-                <h2 class="section-title" style="color: white;">A Home Away from Home</h2>
-                <p style="opacity: 0.8; margin-bottom: 2rem;">We provide safe, spacious, and modern dormitories. Our boarding staff ensures every girl is cared for in a family-like environment.</p>
-                <div style="display: grid; gap: 15px;">
-                    <div style="display: flex; gap: 10px; align-items: center;"><i data-lucide="shield-check" style="color: var(--school-gold);"></i> 24-Hour Security Patrols</div>
-                    <div style="display: flex; gap: 10px; align-items: center;"><i data-lucide="utensils" style="color: var(--school-gold);"></i> High Quality Balanced Diet</div>
-                    <div style="display: flex; gap: 10px; align-items: center;"><i data-lucide="activity" style="color: var(--school-gold);"></i> On-site Medical Sanatorium</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <footer id="contact" style="background: #0f172a; color: white; padding: 5rem 8% 2rem;">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4rem; margin-bottom: 4rem;">
             <div>
@@ -374,6 +375,20 @@
 
     <script>
         lucide.createIcons();
+
+        // Slideshow Logic
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function nextSlide() {
+            if(slides.length === 0) return;
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        // Change slide every 5 seconds
+        setInterval(nextSlide, 5000);
 
         function togglePortal(show) {
             document.getElementById('portal-view').style.display = show ? 'flex' : 'none';
