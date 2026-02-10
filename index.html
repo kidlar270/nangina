@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>St. Cecilia Nangina Girls Senior School | Excellence in Busia</title>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -40,7 +39,7 @@
             overflow-x: hidden;
         }
 
-        /* --- Reusable Components --- */
+        /* --- UI Components --- */
         .btn {
             padding: 12px 24px;
             border-radius: 10px;
@@ -110,13 +109,14 @@
         .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--school-navy); }
         .logo-icon { background: var(--grad-primary); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
         .nav-links { display: flex; gap: 1.5rem; list-style: none; }
-        .nav-links a { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.9rem; }
+        .nav-links a { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.9rem; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent-blue); }
 
         /* --- Hero --- */
         .hero {
             background: var(--grad-primary);
             color: white;
-            min-height: 85vh;
+            min-height: 80vh;
             display: flex;
             align-items: center;
             position: relative;
@@ -135,9 +135,9 @@
         }
 
         .hero-content { max-width: 800px; position: relative; z-index: 2; }
-        .hero-content h1 { font-size: 4rem; line-height: 1; margin-bottom: 1.5rem; font-weight: 800; }
+        .hero-content h1 { font-size: 4rem; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 800; }
 
-        /* --- Stats Card --- */
+        /* --- Stats --- */
         .stats-strip {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -159,118 +159,39 @@
         .stat-box h2 { font-size: 2.5rem; color: var(--school-navy); }
         .stat-box p { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
 
-        /* --- Welcome Message --- */
-        .welcome-section { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
-        .welcome-img { background: var(--border-color); border-radius: 30px; height: 500px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        /* --- Table Styling --- */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        .results-table th { background: var(--school-navy); color: white; padding: 20px; text-align: left; }
+        .results-table td { padding: 20px; border-bottom: 1px solid var(--border-color); }
 
         /* --- Portal Overlay --- */
         .portal-overlay { 
-            position: fixed; 
-            inset: 0; 
-            background: var(--grad-dark); 
-            z-index: 2000; 
-            display: none; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 2rem; 
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); 
+            z-index: 2000; display: none; justify-content: center; 
+            align-items: center; padding: 2rem; backdrop-filter: blur(10px);
         }
-        
         .portal-card {
-            width: 100%;
-            max-width: 440px;
-            background: rgba(30, 41, 59, 0.9);
-            padding: 2.5rem;
-            border-radius: 30px;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
+            width: 100%; max-width: 440px; background: #1e293b; padding: 2.5rem;
+            border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); color: white;
         }
 
-        .role-selector {
-            display: flex;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 5px;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        /* --- Responsive --- */
+        @media (max-width: 992px) {
+            .hero-content h1 { font-size: 3rem; }
+            .stats-strip { grid-template-columns: 1fr 1fr; }
         }
-
-        .role-tab {
-            flex: 1;
-            padding: 8px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            opacity: 0.5;
-            text-transform: uppercase;
-        }
-
-        .role-tab.active {
-            background: white;
-            color: var(--school-navy);
-            opacity: 1;
-        }
-
-        .input-wrap {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-
-        .input-wrap i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .portal-input {
-            width: 100%;
-            padding: 14px 14px 14px 45px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(15, 23, 42, 0.5);
-            color: white;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .portal-input:focus {
-            border-color: var(--school-gold);
-        }
-
-        .error-msg {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            margin-bottom: 1rem;
-            display: none;
-            text-align: center;
-        }
-
-        .login-loading {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            margin-top: 1rem;
-            color: var(--school-gold);
-        }
-
         @media (max-width: 768px) {
-            .welcome-section, .stats-strip { grid-template-columns: 1fr; }
-            .hero-content h1 { font-size: 2.5rem; }
             .nav-links { display: none; }
+            .hero-content h1 { font-size: 2.5rem; }
+            .stats-strip { grid-template-columns: 1fr; }
+            section { padding: 4rem 5%; }
         }
     </style>
 </head>
@@ -285,14 +206,15 @@
             </div>
         </a>
         <ul class="nav-links">
-            <li><a href="#about">Welcome</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#results">Results</a></li>
             <li><a href="#departments">Curriculum</a></li>
-            <li><a href="#boarding">Student Life</a></li>
-            <li><a href="#admissions">Admissions</a></li>
+            <li><a href="#boarding">Life</a></li>
+            <li><a href="#news">News</a></li>
         </ul>
         <div style="display: flex; gap: 10px;">
             <button class="btn btn-outline" onclick="togglePortal(true)">Nexus Login</button>
-            <button class="btn btn-primary">Enrol Now</button>
+            <a href="#admissions" class="btn btn-primary">Enrol Now</a>
         </div>
     </nav>
 
@@ -300,119 +222,176 @@
         <section class="hero-content">
             <span class="section-tag" style="background: rgba(255,255,255,0.1); color: var(--school-gold);">Empowering the Girl Child</span>
             <h1>Knowledge is Power, Integrity is Wealth.</h1>
-            <p style="font-size: 1.25rem; opacity: 0.9; margin-bottom: 2.5rem;">Located in the serene hills of Funyula, we provide a holistic environment where young women are shaped into global citizens and visionary leaders.</p>
+            <p style="font-size: 1.25rem; opacity: 0.9; margin-bottom: 2.5rem;">The premier National Girls' School in Funyula, dedicated to shaping tomorrow's leaders through academic rigor and spiritual discipline.</p>
             <div style="display: flex; gap: 1rem;">
                 <a href="#admissions" class="btn btn-primary">Admissions 2026</a>
-                <a href="#gallery" class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.3);">Campus Life</a>
+                <a href="#boarding" class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.3);">Explore Campus</a>
             </div>
         </section>
     </header>
 
-    <section style="padding-top: 0;">
+    <section style="padding-top: 0; padding-bottom: 3rem;">
         <div class="stats-strip">
-            <div class="stat-box"><h2>7.04</h2><p>Mean Score (KCSE)</p></div>
-            <div class="stat-box"><h2>1,200</h2><p>Current Students</p></div>
+            <div class="stat-box"><h2>7.04</h2><p>KCSE Mean 2024</p></div>
+            <div class="stat-box"><h2>1,200</h2><p>Total Students</p></div>
             <div class="stat-box"><h2>100%</h2><p>Boarding Safety</p></div>
-            <div class="stat-box"><h2>32</h2><p>Clubs & Societies</p></div>
+            <div class="stat-box"><h2>45+</h2><p>University Entry</p></div>
         </div>
     </section>
 
-    <!-- NEXUS PORTAL -->
+    <section id="results">
+        <span class="section-tag">Performance</span>
+        <h2 class="section-title">Academic Excellence</h2>
+        <div style="overflow-x: auto;">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Mean Score</th>
+                        <th>Mean Grade</th>
+                        <th>Univ. Qualifier Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>2024</td><td>7.043</td><td>C+ (Plus)</td><td>82%</td></tr>
+                    <tr><td>2023</td><td>6.820</td><td>C+ (Plus)</td><td>76%</td></tr>
+                    <tr><td>2022</td><td>6.412</td><td>C (Plain)</td><td>68%</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="leadership" style="background: #f1f5f9;">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <span class="section-tag">Administration</span>
+            <h2 class="section-title">School Leadership</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+            <div style="background: white; padding: 2.5rem; border-radius: 20px; text-align: center; box-shadow: var(--shadow-lg);">
+                <div style="width: 100px; height: 100px; background: var(--border-color); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;"><i data-lucide="user"></i></div>
+                <h4>Mrs. Catherine Irungu</h4>
+                <p style="color: var(--school-gold-dark); font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">Chief Principal</p>
+            </div>
+            <div style="background: white; padding: 2.5rem; border-radius: 20px; text-align: center; box-shadow: var(--shadow-lg);">
+                <div style="width: 100px; height: 100px; background: var(--border-color); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;"><i data-lucide="user"></i></div>
+                <h4>Mr. John Omanyala</h4>
+                <p style="color: var(--school-gold-dark); font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">Deputy Principal</p>
+            </div>
+            <div style="background: white; padding: 2.5rem; border-radius: 20px; text-align: center; box-shadow: var(--shadow-lg);">
+                <div style="width: 100px; height: 100px; background: var(--border-color); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;"><i data-lucide="award"></i></div>
+                <h4>B.O.M Chair</h4>
+                <p style="color: var(--school-gold-dark); font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">Management</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="news">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem;">
+            <div>
+                <span class="section-tag">Updates</span>
+                <h2 class="section-title">Latest from Nangina</h2>
+            </div>
+            <button class="btn btn-outline">View Archive</button>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            <div style="border-radius: 20px; overflow: hidden; background: white; border: 1px solid var(--border-color);">
+                <div style="height: 200px; background: #cbd5e1; display: flex; align-items: center; justify-content: center;"><i data-lucide="camera" size="48"></i></div>
+                <div style="padding: 1.5rem;">
+                    <p style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 800;">FEB 10, 2026</p>
+                    <h4 style="margin: 10px 0;">New ICT Lab Commissioned</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">The school has launched a state-of-the-art computer center with 50 high-end machines...</p>
+                </div>
+            </div>
+            <div style="border-radius: 20px; overflow: hidden; background: white; border: 1px solid var(--border-color);">
+                <div style="height: 200px; background: #cbd5e1; display: flex; align-items: center; justify-content: center;"><i data-lucide="trophy" size="48"></i></div>
+                <div style="padding: 1.5rem;">
+                    <p style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 800;">JAN 28, 2026</p>
+                    <h4 style="margin: 10px 0;">Regional Athletics Champions</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Our track and field team swept the medals at the Busia County Inter-School games...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="boarding" style="background: var(--grad-dark); color: white;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div style="height: 180px; background: rgba(255,255,255,0.05); border-radius: 20px;"></div>
+                <div style="height: 180px; background: rgba(255,255,255,0.05); border-radius: 20px; margin-top: 30px;"></div>
+                <div style="height: 180px; background: rgba(255,255,255,0.05); border-radius: 20px;"></div>
+                <div style="height: 180px; background: rgba(255,255,255,0.05); border-radius: 20px; margin-top: 30px;"></div>
+            </div>
+            <div>
+                <span class="section-tag" style="background: rgba(255,255,255,0.1); color: var(--school-gold);">Hostel Life</span>
+                <h2 class="section-title" style="color: white;">A Home Away from Home</h2>
+                <p style="opacity: 0.8; margin-bottom: 2rem;">We provide safe, spacious, and modern dormitories. Our boarding staff ensures every girl is cared for in a family-like environment.</p>
+                <div style="display: grid; gap: 15px;">
+                    <div style="display: flex; gap: 10px; align-items: center;"><i data-lucide="shield-check" style="color: var(--school-gold);"></i> 24-Hour Security Patrols</div>
+                    <div style="display: flex; gap: 10px; align-items: center;"><i data-lucide="utensils" style="color: var(--school-gold);"></i> High Quality Balanced Diet</div>
+                    <div style="display: flex; gap: 10px; align-items: center;"><i data-lucide="activity" style="color: var(--school-gold);"></i> On-site Medical Sanatorium</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" style="background: #0f172a; color: white; padding: 5rem 8% 2rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4rem; margin-bottom: 4rem;">
+            <div>
+                <h3 style="color: var(--school-gold); margin-bottom: 1.5rem;">Nangina Girls</h3>
+                <p style="opacity: 0.6; font-size: 0.9rem;">Empowering young women through excellence, faith, and innovation. Located in the heart of Funyula, Busia.</p>
+            </div>
+            <div>
+                <h4 style="margin-bottom: 1.5rem;">Explore</h4>
+                <ul style="list-style: none; opacity: 0.7; font-size: 0.9rem;">
+                    <li style="margin-bottom: 10px;"><a href="#about" style="color: white; text-decoration: none;">About Us</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#results" style="color: white; text-decoration: none;">Academic Performance</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#boarding" style="color: white; text-decoration: none;">Campus Facilities</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="margin-bottom: 1.5rem;">Contact</h4>
+                <p style="opacity: 0.7; font-size: 0.9rem;">P.O. Box 45 - 50406,<br>Funyula, Kenya</p>
+                <p style="opacity: 0.7; font-size: 0.9rem; margin-top: 10px;">info@nanginagirls.sc.ke</p>
+            </div>
+        </div>
+        <div style="text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; opacity: 0.5; font-size: 0.8rem;">
+            &copy; 2026 St. Cecilia Nangina Girls Senior School. All rights reserved.
+        </div>
+    </footer>
+
     <div id="portal-view" class="portal-overlay">
         <div class="portal-card">
-            <div style="text-align: center; margin-bottom: 1.5rem;">
-                <h2 style="color: var(--school-gold); font-weight: 800; font-size: 1.75rem;">Nexus Command</h2>
-                <p style="opacity: 0.5; font-size: 0.85rem;">Secure Institutional Access</p>
-            </div>
-
-            <div id="error-feedback" class="error-msg">Invalid credentials. Please try again.</div>
-
-            <!-- Role Selector -->
-            <div class="role-selector">
-                <div class="role-tab active" data-role="student" onclick="switchRole('student', this)">Student</div>
-                <div class="role-tab" data-role="teacher" onclick="switchRole('teacher', this)">Teacher</div>
-                <div class="role-tab" data-role="admin" onclick="switchRole('admin', this)">Admin</div>
-            </div>
-
-            <div style="display: grid; gap: 0.5rem;">
-                <div class="input-wrap">
-                    <i data-lucide="user" size="18"></i>
-                    <input type="text" id="username-input" class="portal-input" placeholder="Admission Number">
-                </div>
-                <div class="input-wrap">
-                    <i data-lucide="lock" size="18"></i>
-                    <input type="password" id="password-input" class="portal-input" placeholder="Access Password">
-                </div>
-                
-                <button class="btn btn-primary" id="login-btn" onclick="handleLogin()" style="width: 100%; margin-top: 1rem; padding: 15px;">Authorize Login</button>
-                
-                <div id="login-loader" class="login-loading">
-                    <i data-lucide="loader-2" class="spin" size="18"></i>
-                    <span>Authenticating...</span>
-                </div>
-
-                <div style="text-align: center; margin-top: 1.5rem;">
-                    <button onclick="togglePortal(false)" style="background: none; border: none; color: white; opacity: 0.4; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; margin: 0 auto;">
-                        <i data-lucide="arrow-left" size="14"></i> Back to Public Site
-                    </button>
-                </div>
+            <h2 style="color: var(--school-gold); text-align: center; margin-bottom: 1.5rem;">Nexus Portal</h2>
+            <div id="error-feedback" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 10px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 1rem; display: none;"></div>
+            <div style="display: grid; gap: 10px;">
+                <input type="text" id="username-input" placeholder="ID / Admission Number" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;">
+                <input type="password" id="password-input" placeholder="Password" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;">
+                <button class="btn btn-primary" onclick="handleLogin()" style="width: 100%;">Authorize Access</button>
+                <button onclick="togglePortal(false)" style="background: none; border: none; color: white; opacity: 0.4; cursor: pointer; margin-top: 10px;">Cancel</button>
             </div>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
-        let currentRole = 'student';
 
         function togglePortal(show) {
             document.getElementById('portal-view').style.display = show ? 'flex' : 'none';
-            document.getElementById('error-feedback').style.display = 'none';
-        }
-
-        function switchRole(role, element) {
-            currentRole = role;
-            document.querySelectorAll('.role-tab').forEach(tab => tab.classList.remove('active'));
-            element.classList.add('active');
-            
-            const userInput = document.getElementById('username-input');
-            if (role === 'student') userInput.placeholder = "Admission Number";
-            else if (role === 'teacher') userInput.placeholder = "TSC Number / Staff ID";
-            else userInput.placeholder = "Admin Username";
         }
 
         function handleLogin() {
-            const user = document.getElementById('username-input').value.trim();
-            const pass = document.getElementById('password-input').value.trim();
+            const user = document.getElementById('username-input').value;
+            const pass = document.getElementById('password-input').value;
             const error = document.getElementById('error-feedback');
-            const loader = document.getElementById('login-loader');
-            const btn = document.getElementById('login-btn');
 
-            // Simplified Mock Authentication
             if (user === 'admin' && pass === 'admin') {
-                error.style.display = 'none';
-                btn.style.display = 'none';
-                loader.style.display = 'flex';
-
-                // Simulate redirect delay
-                setTimeout(() => {
-                    if (currentRole === 'student') {
-                        window.location.href = 'student.html';
-                    } else if (currentRole === 'teacher') {
-                        window.location.href = 'teachers.html';
-                    } else if (currentRole === 'admin') {
-                        window.location.href = 'admin.html';
-                    }
-                }, 1200);
+                alert('Authentication Successful. Welcome to Nexus Dashboard.');
+                window.location.reload();
             } else {
                 error.style.display = 'block';
-                error.innerText = "Access Denied: Incorrect credentials.";
+                error.innerText = "Invalid credentials. Please contact ICT Support.";
             }
         }
     </script>
-
-    <style>
-        .spin { animation: spin 1s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    </style>
 </body>
 </html>
