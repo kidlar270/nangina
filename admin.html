@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Nangina Girls Senior School</title>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -12,8 +11,8 @@
         :root {
             --school-navy: #1e3a8a; 
             --school-gold: #fbbf24;
-            --accent-blue: #3b82f6;
-            --bg-body: #f1f5f9;
+            --accent-blue: #2563eb;
+            --bg-body: #f8fafc;
             --surface: #ffffff;
             --text-main: #0f172a;
             --text-muted: #64748b;
@@ -21,8 +20,9 @@
             --danger: #ef4444;
             --success: #10b981;
             --radius-md: 12px;
-            --radius-lg: 20px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius-lg: 24px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.05);
         }
 
         * {
@@ -43,12 +43,14 @@
         .sidebar {
             width: 280px;
             background: var(--school-navy);
+            background: linear-gradient(180deg, #1e3a8a 0%, #1e293b 100%);
             color: white;
-            padding: 2rem 1.5rem;
+            padding: 2rem 1.25rem;
             display: flex;
             flex-direction: column;
             position: fixed;
             height: 100vh;
+            z-index: 100;
         }
 
         .admin-logo {
@@ -56,7 +58,13 @@
             align-items: center;
             gap: 12px;
             margin-bottom: 3rem;
-            padding: 0 0.5rem;
+            padding: 0 0.75rem;
+        }
+
+        .admin-logo h2 {
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            font-weight: 800;
         }
 
         .nav-menu {
@@ -65,62 +73,75 @@
         }
 
         .nav-item {
-            padding: 12px 16px;
+            padding: 14px 16px;
             border-radius: var(--radius-md);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 12px;
-            transition: all 0.3s;
-            color: rgba(255,255,255,0.7);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: rgba(255,255,255,0.6);
             font-weight: 500;
+            font-size: 0.95rem;
         }
 
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255,255,255,0.1);
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
             color: white;
+        }
+
+        .nav-item.active {
+            background: var(--school-gold);
+            color: var(--school-navy);
+            box-shadow: 0 10px 15px -3px rgba(251, 191, 36, 0.3);
+            font-weight: 700;
         }
 
         /* --- Main Content --- */
         .main-content {
             margin-left: 280px;
             flex-grow: 1;
-            padding: 2rem 3rem;
+            padding: 2.5rem 4rem;
+            max-width: 1600px;
         }
 
         .header-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
 
-        .welcome-msg h1 { font-size: 1.75rem; color: var(--school-navy); }
-        .welcome-msg p { color: var(--text-muted); font-size: 0.9rem; }
+        .welcome-msg h1 { font-size: 2rem; color: var(--school-navy); font-weight: 800; letter-spacing: -0.5px; }
+        .welcome-msg p { color: var(--text-muted); font-size: 1rem; margin-top: 4px; }
 
         /* --- Stats Row --- */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
-            margin-bottom: 2.5rem;
+            margin-bottom: 3rem;
         }
 
         .stat-card {
             background: var(--surface);
-            padding: 1.5rem;
+            padding: 1.75rem;
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-md);
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.25rem;
+            border: 1px solid white;
+            transition: transform 0.3s ease;
         }
 
+        .stat-card:hover { transform: translateY(-5px); }
+
         .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -130,66 +151,100 @@
         .admin-card {
             background: var(--surface);
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow);
-            padding: 2rem;
-            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--border-color);
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        /* --- Table Styling --- */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .data-table th {
+            padding: 12px 20px;
+            text-align: left;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .data-table td {
+            padding: 16px 20px;
+            background: #fff;
+            border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .data-table tr td:first-child { border-left: 1px solid var(--border-color); border-radius: 12px 0 0 12px; }
+        .data-table tr td:last-child { border-right: 1px solid var(--border-color); border-radius: 0 12px 12px 0; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem !important;
+            background: transparent !important;
+            border: none !important;
+            color: var(--text-muted);
         }
 
         /* --- Form Styling --- */
         .admin-form {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1.25rem;
+            gap: 1.5rem;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .form-group.full {
-            grid-column: span 2;
-        }
+        .form-group.full { grid-column: span 2; }
 
         .form-group label {
             font-size: 0.85rem;
             font-weight: 700;
             color: var(--school-navy);
+            padding-left: 4px;
         }
 
         .form-group input, .form-group select, .form-group textarea {
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            transition: border-color 0.3s;
+            padding: 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            background: #fcfdfe;
+            transition: all 0.2s;
         }
 
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-group input:focus, .form-group textarea:focus {
+        .form-group input:focus {
             outline: none;
             border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            background: white;
         }
 
         /* --- File Upload Area --- */
         .file-dropzone {
-            border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 2.5rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
@@ -198,15 +253,17 @@
 
         .file-dropzone:hover {
             border-color: var(--accent-blue);
-            background: #eff6ff;
+            background: #f0f7ff;
         }
 
         .preview-image {
-            max-width: 100%;
+            max-width: 200px;
             max-height: 200px;
-            border-radius: 8px;
-            margin-top: 1rem;
+            border-radius: 12px;
+            margin: 1.5rem auto 0;
             display: none;
+            box-shadow: var(--shadow-md);
+            border: 3px solid white;
         }
 
         /* --- Action Buttons --- */
@@ -214,65 +271,64 @@
             grid-column: span 2;
             background: var(--school-navy);
             color: white;
-            padding: 14px;
+            padding: 16px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-top: 1rem;
-            transition: opacity 0.3s;
+            gap: 12px;
+            transition: all 0.3s;
         }
 
-        .btn-submit:hover { opacity: 0.9; }
+        .btn-submit:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.2);
+        }
 
         .btn-icon {
-            background: none;
+            background: #f1f5f9;
             border: none;
             cursor: pointer;
-            padding: 6px;
-            border-radius: 6px;
-            transition: background 0.2s;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
             color: var(--text-muted);
         }
 
         .btn-delete:hover {
-            background: #fef2f2;
+            background: #fee2e2;
             color: var(--danger);
         }
 
         /* --- Tab Toggle --- */
         .tab-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             border: 1px solid transparent;
-            background: transparent;
+            background: #f1f5f9;
             color: var(--text-muted);
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         .tab-btn.active {
-            background: #eff6ff;
-            color: var(--accent-blue);
-            border-color: #dbeafe;
+            background: var(--school-navy);
+            color: white;
         }
 
         /* --- Custom Modal --- */
         #deleteModal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
             z-index: 9999;
             align-items: center;
             justify-content: center;
@@ -280,46 +336,26 @@
 
         .modal-content {
             background: white;
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: var(--radius-lg);
-            max-width: 400px;
+            max-width: 420px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
         }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 2rem;
-        }
-
-        .btn-modal {
-            flex: 1;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-confirm { background: var(--danger); color: white; border: none; }
-        .btn-cancel { background: white; color: var(--text-main); }
 
         @media (max-width: 1024px) {
             .sidebar { width: 80px; padding: 2rem 0.5rem; }
             .admin-logo h2, .nav-item span { display: none; }
-            .main-content { margin-left: 80px; }
+            .main-content { margin-left: 80px; padding: 2rem; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .admin-form { grid-template-columns: 1fr; }
-            .btn-submit { grid-column: auto; }
-            .form-group.full { grid-column: auto; }
+            .btn-submit, .form-group.full { grid-column: auto; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar Navigation -->
     <aside class="sidebar">
         <div class="admin-logo">
             <i data-lucide="shield-check" size="32" style="color: var(--school-gold);"></i>
@@ -336,92 +372,91 @@
         <div class="nav-item" style="margin-top: auto; color: #f87171;"><i data-lucide="log-out"></i> <span>Logout</span></div>
     </aside>
 
-    <!-- Main Dashboard -->
     <main class="main-content">
         <header class="header-bar">
             <div class="welcome-msg">
                 <h1>School Management</h1>
                 <p>Register and manage Nangina Girls database records.</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1.25rem; background: white; padding: 8px 16px; border-radius: 50px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);">
                 <div style="text-align: right;">
-                    <p style="font-weight: 700; font-size: 0.9rem;">Administrator</p>
+                    <p style="font-weight: 800; font-size: 0.9rem; color: var(--school-navy);">Super Admin</p>
                     <p style="font-size: 0.75rem; color: var(--text-muted);">Main Office</p>
                 </div>
-                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--school-gold); display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--school-navy);">A</div>
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--school-gold); display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--school-navy); border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">A</div>
             </div>
         </header>
 
-        <!-- Global Stats -->
         <section class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon" style="background: #eff6ff; color: #3b82f6;"><i data-lucide="users"></i></div>
                 <div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Students</p>
-                    <h3 style="font-size: 1.5rem;" id="stat-students">0</h3>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Students</p>
+                    <h3 style="font-size: 1.75rem; font-weight: 800;" id="stat-students">0</h3>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon" style="background: #fdf2f8; color: #ec4899;"><i data-lucide="graduation-cap"></i></div>
                 <div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Teachers</p>
-                    <h3 style="font-size: 1.5rem;" id="stat-teachers">0</h3>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Teachers</p>
+                    <h3 style="font-size: 1.75rem; font-weight: 800;" id="stat-teachers">0</h3>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon" style="background: #f0fdf4; color: #10b981;"><i data-lucide="shield"></i></div>
                 <div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Admins</p>
-                    <h3 style="font-size: 1.5rem;" id="stat-admins">1</h3>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Admins</p>
+                    <h3 style="font-size: 1.75rem; font-weight: 800;" id="stat-admins">1</h3>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon" style="background: #fefce8; color: #ca8a04;"><i data-lucide="message-square"></i></div>
+                <div class="stat-icon" style="background: #fffbeb; color: #d97706;"><i data-lucide="message-square"></i></div>
                 <div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Notices Sent</p>
-                    <h3 style="font-size: 1.5rem;" id="stat-notices">0</h3>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Notices Sent</p>
+                    <h3 style="font-size: 1.75rem; font-weight: 800;" id="stat-notices">0</h3>
                 </div>
             </div>
         </section>
 
-        <!-- Messaging & Reports Section -->
         <section class="admin-card">
             <div class="card-header">
-                <h2 style="font-size: 1.1rem; color: var(--school-navy);"><i data-lucide="send" style="vertical-align: middle; margin-right: 8px;"></i> Send Notices & Reports</h2>
+                <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--school-navy);"><i data-lucide="send" style="vertical-align: middle; margin-right: 12px; color: var(--accent-blue);"></i> Send Notices & Reports</h2>
             </div>
             
             <form id="msgForm" class="admin-form" onsubmit="event.preventDefault(); handleNoticeSubmit();">
                 <div class="form-group">
                     <label>Broadcast To</label>
                     <select id="msg-target" required>
-                        <option value="all">All School</option>
-                        <option value="teachers">Teachers Only</option>
-                        <option value="students">Students Only</option>
+                        <option value="all">All School Community</option>
+                        <option value="teachers">Teachers & Staff</option>
+                        <option value="students">Students & Parents</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Message Priority</label>
                     <select id="msg-priority">
-                        <option value="normal">Normal</option>
-                        <option value="urgent">Urgent / Announcement</option>
-                        <option value="report">Official Report</option>
+                        <option value="normal">Normal Information</option>
+                        <option value="urgent">Urgent Announcement</option>
+                        <option value="report">Official Academic Report</option>
                     </select>
                 </div>
                 <div class="form-group full">
                     <label>Notice Heading / Subject</label>
-                    <input type="text" id="msg-subject" placeholder="e.g. End of Term Reporting Dates" required>
+                    <input type="text" id="msg-subject" placeholder="e.g. End of Term Reporting Dates 2026" required>
                 </div>
                 <div class="form-group full">
                     <label>Message Content</label>
-                    <textarea id="msg-body" placeholder="Write your detailed report or message here..." required></textarea>
+                    <textarea id="msg-body" placeholder="Write your detailed report or message here..." required style="min-height: 150px;"></textarea>
                 </div>
                 
                 <div class="form-group full">
                     <label>Attachment / Image</label>
                     <div class="file-dropzone" onclick="document.getElementById('img-upload').click()">
-                        <i data-lucide="image" size="32" style="color: var(--text-muted); margin-bottom: 8px;"></i>
-                        <p style="font-size: 0.85rem; color: var(--text-muted);">Click to upload or drag image here</p>
-                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">PNG, JPG or PDF (Max 5MB)</p>
+                        <div style="background: white; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: var(--shadow-sm);">
+                            <i data-lucide="upload-cloud" size="28" style="color: var(--accent-blue);"></i>
+                        </div>
+                        <p style="font-weight: 700; color: var(--text-main); font-size: 1rem;">Click to upload media</p>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">PNG, JPG or PDF up to 5MB</p>
                         <input type="file" id="img-upload" hidden accept="image/*" onchange="previewFile(this)">
                         <img id="img-preview" class="preview-image" src="#" alt="Preview">
                     </div>
@@ -433,11 +468,10 @@
             </form>
         </section>
 
-        <!-- Registration Form (Combined) -->
         <section class="admin-card">
             <div class="card-header">
-                <h2 style="font-size: 1.1rem; color: var(--school-navy);"><i data-lucide="user-plus" style="vertical-align: middle; margin-right: 8px;"></i> User Registration</h2>
-                <div style="display: flex; gap: 8px;">
+                <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--school-navy);"><i data-lucide="user-plus" style="vertical-align: middle; margin-right: 12px; color: var(--accent-blue);"></i> User Registration</h2>
+                <div style="display: flex; gap: 8px; background: #f1f5f9; padding: 6px; border-radius: 12px;">
                     <button class="tab-btn active" id="btnStudentForm" onclick="toggleFormType('student')">Student</button>
                     <button class="tab-btn" id="btnTeacherForm" onclick="toggleFormType('teacher')">Teacher</button>
                     <button class="tab-btn" id="btnAdminForm" onclick="toggleFormType('admin')">Admin</button>
@@ -486,16 +520,15 @@
                     <input type="email" id="inp-email" placeholder="official@domain.com">
                 </div>
                 <button type="submit" class="btn-submit">
-                    <i data-lucide="database"></i> Save Record
+                    <i data-lucide="database"></i> Save Member Record
                 </button>
             </form>
         </section>
 
-        <!-- Directory Preview -->
         <section class="admin-card">
             <div class="card-header">
-                <h2 id="dir-title" style="font-size: 1.1rem; color: var(--school-navy);"><i data-lucide="table" style="vertical-align: middle; margin-right: 8px;"></i> Student Directory</h2>
-                <div style="display: flex; gap: 10px;">
+                <h2 id="dir-title" style="font-size: 1.25rem; font-weight: 800; color: var(--school-navy);"><i data-lucide="table" style="vertical-align: middle; margin-right: 12px; color: var(--accent-blue);"></i> Student Directory</h2>
+                <div style="display: flex; gap: 8px;">
                     <button class="tab-btn active" id="btnStudentDir" onclick="toggleDirectory('student')">Students</button>
                     <button class="tab-btn" id="btnTeacherDir" onclick="toggleDirectory('teacher')">Teachers</button>
                     <button class="tab-btn" id="btnAdminDir" onclick="toggleDirectory('admin')">Admins</button>
@@ -518,8 +551,11 @@
                     <tbody id="directory-body">
                         <tr>
                             <td colspan="7" class="empty-state">
-                                <i data-lucide="folder-open" size="48" style="display: block; margin: 0 auto 1rem; opacity: 0.3;"></i>
-                                No records found. Start by adding data above.
+                                <div style="background: #f8fafc; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; border: 1px solid var(--border-color);">
+                                    <i data-lucide="folder-open" size="32" style="opacity: 0.5;"></i>
+                                </div>
+                                <h4 style="color: var(--text-main);">No records found</h4>
+                                <p style="font-size: 0.85rem;">Start by adding data in the registration form above.</p>
                             </td>
                         </tr>
                     </tbody>
@@ -528,17 +564,16 @@
         </section>
     </main>
 
-    <!-- Delete Confirmation Modal -->
     <div id="deleteModal">
         <div class="modal-content">
-            <div style="background: #fee2e2; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: var(--danger);">
-                <i data-lucide="alert-triangle" size="32"></i>
+            <div style="background: #fee2e2; width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: var(--danger);">
+                <i data-lucide="trash-2" size="32"></i>
             </div>
-            <h3 style="margin-bottom: 0.5rem;">Delete Record?</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Are you sure you want to remove <strong id="deleteTargetName">this record</strong>? This action cannot be undone.</p>
-            <div class="modal-actions">
-                <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
-                <button class="btn-modal btn-confirm" onclick="confirmDelete()">Delete Permanently</button>
+            <h3 style="margin-bottom: 0.75rem; font-weight: 800; font-size: 1.25rem;">Delete Record?</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5;">Are you sure you want to remove <strong id="deleteTargetName" style="color: var(--text-main);">this record</strong>? This process is irreversible.</p>
+            <div style="display: flex; gap: 12px; margin-top: 2rem;">
+                <button class="tab-btn" style="flex: 1; padding: 12px;" onclick="closeModal()">Keep Record</button>
+                <button class="btn-submit" style="flex: 1; margin-top: 0; background: var(--danger); grid-column: auto; padding: 12px;" onclick="confirmDelete()">Confirm Delete</button>
             </div>
         </div>
     </div>
@@ -592,8 +627,8 @@
             const streamVal = document.getElementById('inp-stream').value || '-';
 
             tr.innerHTML = `
-                <td style="font-weight: 600;">${name}</td>
-                <td>${idVal}</td>
+                <td style="font-weight: 700; color: var(--school-navy);">${name}</td>
+                <td><span style="background: #f1f5f9; padding: 4px 8px; border-radius: 6px; font-family: monospace;">${idVal}</span></td>
                 <td>${classVal}</td>
                 <td>${phoneVal}</td>
                 <td>${upiVal}</td>
@@ -612,7 +647,7 @@
 
             lucide.createIcons();
             document.getElementById('regForm').reset();
-            showToast(`${currentFormType.charAt(0).toUpperCase() + currentFormType.slice(1)} record saved!`);
+            showToast(`${currentFormType.charAt(0).toUpperCase() + currentFormType.slice(1)} record saved successfully.`);
         }
 
         function previewFile(input) {
@@ -634,14 +669,11 @@
         }
 
         function handleNoticeSubmit() {
-            const subject = document.getElementById('msg-subject').value;
             const target = document.getElementById('msg-target').value;
-            
-            // Increment notice stat
             const stat = document.getElementById('stat-notices');
             stat.innerText = parseInt(stat.innerText) + 1;
 
-            showToast(`Notice broadcasted to ${target} successfully!`);
+            showToast(`Broadcast sent to ${target}.`);
             document.getElementById('msgForm').reset();
             document.getElementById('img-preview').style.display = 'none';
         }
@@ -656,13 +688,13 @@
             const head = document.getElementById('table-head');
             
             if(type === 'admin') {
-                title.innerHTML = `<i data-lucide="shield" style="vertical-align: middle; margin-right: 8px;"></i> Admin Directory`;
+                title.innerHTML = `<i data-lucide="shield" style="vertical-align: middle; margin-right: 12px; color: var(--accent-blue);"></i> Admin Directory`;
                 head.innerHTML = `<th>Name</th><th>Staff Code</th><th>Access Level</th><th>Contact</th><th>Token ID</th><th>Email</th><th style="text-align: right;">Actions</th>`;
             } else if(type === 'teacher') {
-                title.innerHTML = `<i data-lucide="user-check" style="vertical-align: middle; margin-right: 8px;"></i> Teacher Directory`;
+                title.innerHTML = `<i data-lucide="user-check" style="vertical-align: middle; margin-right: 12px; color: var(--accent-blue);"></i> Teacher Directory`;
                 head.innerHTML = `<th>Name</th><th>TSC No.</th><th>Department</th><th>Phone</th><th>National ID</th><th>Email</th><th style="text-align: right;">Actions</th>`;
             } else {
-                title.innerHTML = `<i data-lucide="table" style="vertical-align: middle; margin-right: 8px;"></i> Student Directory`;
+                title.innerHTML = `<i data-lucide="table" style="vertical-align: middle; margin-right: 12px; color: var(--accent-blue);"></i> Student Directory`;
                 head.innerHTML = `<th>Name</th><th>Adm No.</th><th>Class</th><th>Phone</th><th>UPI</th><th>Stream</th><th style="text-align: right;">Actions</th>`;
             }
             lucide.createIcons();
@@ -686,7 +718,7 @@
                 
                 const tbody = document.getElementById('directory-body');
                 if (tbody.children.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><i data-lucide="folder-open" size="48" style="display: block; margin: 0 auto 1rem; opacity: 0.3;"></i>No records found.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><div style="background: #f8fafc; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; border: 1px solid var(--border-color);"><i data-lucide="folder-open" size="32" style="opacity: 0.5;"></i></div><h4 style="color: var(--text-main);">No records found</h4></td></tr>`;
                     lucide.createIcons();
                 }
             }
@@ -695,10 +727,15 @@
 
         function showToast(message) {
             const msg = document.createElement('div');
-            msg.style = "position: fixed; bottom: 20px; right: 20px; background: var(--success); color: white; padding: 12px 24px; border-radius: 8px; box-shadow: var(--shadow); z-index: 10000; font-weight: 600;";
-            msg.innerText = message;
+            msg.style = "position: fixed; bottom: 30px; right: 30px; background: #0f172a; color: white; padding: 16px 28px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); z-index: 10000; font-weight: 600; display: flex; align-items: center; gap: 12px; border-left: 4px solid var(--success); transform: translateY(100px); transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);";
+            msg.innerHTML = `<i data-lucide="check-circle" style="color: var(--success)"></i> ${message}`;
             document.body.appendChild(msg);
-            setTimeout(() => msg.remove(), 3000);
+            lucide.createIcons();
+            setTimeout(() => msg.style.transform = "translateY(0)", 100);
+            setTimeout(() => {
+                msg.style.transform = "translateY(100px)";
+                setTimeout(() => msg.remove(), 500);
+            }, 3000);
         }
     </script>
 </body>
