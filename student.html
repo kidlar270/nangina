@@ -3,695 +3,469 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Portal | Nangina Girls Senior School</title>
+    <title>Student Dashboard | NANGINA GIRLS</title>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js" type="module"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js" type="module"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js" type="module"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
         :root {
             --school-navy: #1e3a8a; 
             --school-gold: #fbbf24;
-            --student-accent: #8b5cf6;
-            --bg-body: #f8fafc;
+            --accent-blue: #3b82f6;
+            --bg-body: #f1f5f9;
             --surface: #ffffff;
             --text-main: #0f172a;
-            --text-muted: #64748b;
+            --text-muted: #475569;
             --border-color: #e2e8f0;
-            --danger: #ef4444;
-            --success: #10b981;
-            --radius-md: 12px;
-            --radius-lg: 20px;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-body);
             color: var(--text-main);
+            display: flex;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* --- STYLISH ANIMATED LOADERS --- */
-        #page-loader, #exit-loader {
+        /* Animated Startup Screen */
+        #splash-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: var(--school-navy);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 10000;
-            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 9999;
+            transition: opacity 0.8s ease-out, visibility 0.8s;
         }
 
-        #exit-loader {
-            transform: translateY(100%); /* Start off-screen at bottom */
-        }
-
-        #exit-loader.active {
-            transform: translateY(0);
-        }
-
-        .loader-exit {
-            transform: translateY(-100%);
-        }
-
-        .loader-content {
-            text-align: center;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .crest-wrapper {
+        .loader-container {
             position: relative;
             width: 100px;
             height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 2rem;
         }
 
-        .crest-icon {
-            color: var(--school-gold);
-            animation: pulse-ring 2s infinite ease-in-out;
-        }
-
-        .spinner-ring {
+        .outer-ring {
             position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border: 2px solid rgba(251, 191, 36, 0.1);
-            border-top: 2px solid var(--school-gold);
+            width: 100%;
+            height: 100%;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--school-gold);
             border-radius: 50%;
-            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            animation: rotateRing 1.5s linear infinite;
         }
 
-        .welcome-text {
-            font-size: 1.5rem;
+        .inner-circle {
+            width: 70px;
+            height: 70px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            animation: pulseStudent 2s ease-in-out infinite;
+            color: var(--school-navy);
+            z-index: 2;
+        }
+
+        .splash-text {
+            color: white;
             font-weight: 800;
-            letter-spacing: -0.5px;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(90deg, #fff, var(--school-gold), #fff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 3s linear infinite;
-        }
-
-        .sub-text {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            font-weight: 500;
-            letter-spacing: 1px;
+            font-size: 1rem;
+            letter-spacing: 4px;
+            opacity: 0;
+            animation: fadeInText 1s 0.5s forwards;
             text-transform: uppercase;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes rotateRing {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
-        @keyframes pulse-ring {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+        @keyframes pulseStudent {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
-        @keyframes shine {
-            to { background-position: 200% center; }
+        @keyframes fadeInText {
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- Layout --- */
-        .navbar {
-            background: var(--surface);
-            padding: 0.75rem 2rem;
+        .hidden-splash {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Navigation Styles */
+        nav {
+            width: 280px;
+            background: var(--school-navy);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+            padding: 0 0.5rem;
+        }
+
+        .nav-links {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-item.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .nav-item.logout {
+            color: #fca5a5;
+            margin-top: auto;
+        }
+
+        .nav-item.logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        /* Content Area */
+        main {
+            flex: 1;
+            padding: 2rem 3rem;
+            overflow-y: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+        }
+
+        .show-content main {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            margin-bottom: 2rem;
+            gap: 1rem;
         }
 
-        .logo-area {
+        .user-profile {
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: var(--school-navy);
-            font-weight: 800;
-            cursor: pointer;
+            gap: 0.75rem;
+            background: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 100px;
+            box-shadow: var(--shadow-sm);
         }
 
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
+        .card {
+            background: var(--surface);
+            border-radius: 1.25rem;
+            padding: 1.25rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.25rem;
         }
 
-        .signout-btn {
-            display: flex;
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-muted);
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
             align-items: center;
-            gap: 8px;
-            background: #fee2e2;
-            color: var(--danger);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 0.85rem;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.9);
+            animation: scaleUp 0.3s ease-out forwards;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 0.75rem;
             font-weight: 700;
             cursor: pointer;
+            border: none;
             transition: all 0.2s;
         }
 
-        .signout-btn:hover {
-            background: var(--danger);
-            color: white;
-        }
+        .btn-cancel { background: #f1f5f9; color: var(--text-main); }
+        .btn-confirm { background: #ef4444; color: white; }
 
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleUp { to { transform: scale(1); } }
 
-        /* --- Content Cards --- */
-        .card {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            color: var(--school-navy);
-        }
-
-        /* --- Notice Styles --- */
-        .notice-item {
-            padding: 1rem;
-            border-left: 4px solid var(--school-navy);
-            background: #f1f5f9;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            position: relative;
-        }
-        .notice-item.urgent {
-            border-left-color: var(--danger);
-            background: #fef2f2;
-        }
-        .notice-tag {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-bottom: 5px;
-            display: inline-block;
-        }
-        .tag-urgent { background: var(--danger); color: white; }
-        .tag-normal { background: var(--school-navy); color: white; }
-        .notice-title { font-weight: 700; margin-bottom: 5px; }
-        .notice-excerpt { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
-        .notice-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 10px; display: flex; gap: 15px; }
-
-        /* --- Resource Downloads --- */
-        .resource-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .resource-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            transition: background 0.2s;
-        }
-
-        .resource-item:hover {
-            background: #f8fafc;
-        }
-
-        .resource-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .resource-icon {
-            width: 36px;
-            height: 36px;
-            background: #f1f5f9;
-            color: var(--school-navy);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .download-btn {
-            background: var(--school-navy);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: opacity 0.2s;
-        }
-
-        /* --- Sidebar Column --- */
-        .profile-card {
-            text-align: center;
-            background: linear-gradient(to bottom right, var(--school-navy), #1e40af);
-            color: white;
-            border: none;
-        }
-
-        .avatar {
-            width: 80px;
-            height: 80px;
-            background: var(--school-gold);
-            border-radius: 50%;
-            margin: 0 auto 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--school-navy);
-            border: 4px solid rgba(255,255,255,0.2);
-        }
-
-        /* Admin Modal */
-        #admin-modal {
+        /* Bottom Navigation */
+        .bottom-nav {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
+            bottom: 0; left: 0; width: 100%;
+            background: var(--school-navy);
+            padding: 0.75rem 1rem;
+            justify-content: space-around;
+            z-index: 900;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            color: rgba(255,255,255,0.6);
+            background: none; border: none; font-size: 0.7rem;
+            gap: 4px;
         }
-        .modal-body {
-            background: white;
-            width: 90%;
-            max-width: 500px;
-            padding: 2rem;
-            border-radius: 15px;
-        }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; }
-        input, select, textarea {
-            width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;
-        }
-        .btn-primary { background: var(--school-navy); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
-        .btn-cancel { background: #f1f5f9; color: var(--text-main); border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
 
-        .empty-state { text-align: center; padding: 3rem 0; color: var(--text-muted); }
+        .mobile-nav-item.active { color: var(--school-gold); }
+        .mobile-nav-item.logout { color: #fca5a5; }
 
-        @media (max-width: 900px) {
-            .container { grid-template-columns: 1fr; }
+        @media (max-width: 768px) {
+            nav { display: none; }
+            .bottom-nav { display: flex; }
+            main { padding: 1.25rem 1.25rem 5rem 1.25rem; }
+            .user-profile span { display: none; }
         }
     </style>
 </head>
 <body>
 
-
-    <!-- Admin Modal -->
-    <div id="admin-modal">
-        <div class="modal-body">
-            <h2 style="margin-bottom: 1rem; color: var(--school-navy)">Admin Dashboard</h2>
-            <div class="form-group">
-                <label>Post Type</label>
-                <select id="post-type" onchange="toggleForm()">
-                    <option value="notice">Student Notice</option>
-                    <option value="resource">Academic File</option>
-                    <option value="activity">School Activity</option>
-                </select>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="loader-container">
+            <div class="outer-ring"></div>
+            <div class="inner-circle">
+                <i data-lucide="graduation-cap" size="40"></i>
             </div>
-            
-            <div id="form-content">
-                <!-- Dynamic form fields -->
-            </div>
+        </div>
+        <div class="splash-text">NANGINA GIRLS</div>
+    </div>
 
-            <div style="display: flex; gap: 10px; margin-top: 1rem;">
-                <button class="btn-primary" id="save-post">Publish Update</button>
-                <button class="btn-cancel" onclick="toggleAdminModal()">Close</button>
+    <!-- Logout Modal -->
+    <div id="logout-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="color: #ef4444; margin-bottom: 1rem;">
+                <i data-lucide="log-out" size="48"></i>
+            </div>
+            <h2 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Sign Out?</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">You will need to login again to access your student portal.</p>
+            <div class="modal-actions">
+                <button onclick="closeLogoutModal()" class="btn-modal btn-cancel">Cancel</button>
+                <button onclick="executeLogout()" class="btn-modal btn-confirm">Sign Out</button>
             </div>
         </div>
     </div>
 
-    <nav class="navbar">
-        <div class="logo-area" onclick="toggleAdminModal()">
-            <i data-lucide="book-open-check" style="color: var(--school-gold);"></i>
-            <span>STUDENT PORTAL</span>
+    <!-- Mobile Navigation -->
+    <div class="bottom-nav">
+        <button onclick="switchView('dashboard')" id="mobile-nav-dashboard" class="mobile-nav-item active">
+            <i data-lucide="layout-dashboard" size="20"></i>
+            <span>Home</span>
+        </button>
+        <button onclick="switchView('resources')" id="mobile-nav-resources" class="mobile-nav-item">
+            <i data-lucide="folder-down" size="20"></i>
+            <span>Files</span>
+        </button>
+        <button onclick="openLogoutModal()" class="mobile-nav-item logout">
+            <i data-lucide="log-out" size="20"></i>
+            <span>Exit</span>
+        </button>
+    </div>
+
+    <!-- Desktop Sidebar -->
+    <nav>
+        <div class="nav-logo">
+            <i data-lucide="shield-check" style="color: var(--school-gold)"></i>
+            <span style="font-weight: 800; font-size: 1.2rem;">NANGINA GIRLS</span>
         </div>
-        <div class="nav-actions">
-            <div id="notif-bell" style="position: relative; cursor: pointer;">
-                <i data-lucide="bell" size="20" style="color: var(--school-navy);"></i>
-                <span id="unread-count" style="position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 10px; display: none;">0</span>
-            </div>
-            <button class="signout-btn" id="signout-trigger">
-                <i data-lucide="log-out" size="18"></i>
-                Sign Out
+        <div class="nav-links">
+            <button onclick="switchView('dashboard')" id="nav-dashboard" class="nav-item active">
+                <i data-lucide="layout-dashboard" size="20"></i> Dashboard
+            </button>
+            <button onclick="switchView('resources')" id="nav-resources" class="nav-item">
+                <i data-lucide="folder-down" size="20"></i> Resources
+            </button>
+            
+            <button onclick="openLogoutModal()" class="nav-item logout">
+                <i data-lucide="log-out" size="20"></i> Sign Out
             </button>
         </div>
     </nav>
 
-    <div class="container">
-        <!-- Main Column -->
-        <main>
-            <!-- Announcements -->
+    <main>
+        <header>
+            <div class="header-title">
+                <h1 id="view-title">Student Dashboard</h1>
+            </div>
+            <div class="user-profile">
+                <div style="width: 30px; height: 30px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--school-navy);">
+                    <i data-lucide="user" size="16"></i>
+                </div>
+                <span id="user-display-name">Authenticating...</span>
+            </div>
+        </header>
+
+        <div id="view-dashboard" class="view-content active">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                <div class="card" style="background: var(--school-navy); color: white; border: none;">
+                    <h2 style="margin-bottom: 0.5rem; font-size: 1.2rem;">Academic Summary</h2>
+                    <p id="class-info" style="opacity: 0.8; font-size: 0.85rem;">Class: -- | Rank: --</p>
+                    <div id="grade-info" style="margin-top: 1.5rem; font-size: 2.25rem; font-weight: 800; color: var(--school-gold);">--%</div>
+                </div>
+
+                <div class="card">
+                    <h3 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Recent Performance</h3>
+                    <div id="performance-chart" style="height: 100px; display: flex; align-items: flex-end; gap: 8px; padding-bottom: 10px;">
+                        <div style="width: 100%; text-align: center; color: var(--text-muted); font-size: 0.75rem;">Connecting to Database...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-resources" class="view-content">
             <div class="card">
-                <div class="section-header">
-                    <h2 class="section-title"><i data-lucide="megaphone"></i> Student Bulletin</h2>
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Recent communications</span>
-                </div>
-                <div class="notice-list" id="student-notices">
-                    <div class="empty-state">
-                        <i data-lucide="inbox" size="40" style="margin-bottom: 10px; opacity: 0.3;"></i>
-                        <p>No new announcements.</p>
-                    </div>
+                <h3 style="font-size: 1rem; margin-bottom: 1rem;">Assignments</h3>
+                <div id="assignment-list" class="empty-state">
+                    <i data-lucide="inbox" size="32" style="margin-bottom: 0.5rem; opacity: 0.3;"></i>
+                    <p>Fetching assignments from database...</p>
                 </div>
             </div>
+        </div>
+    </main>
 
-            <!-- Academic Downloads -->
-            <div class="card">
-                <div class="section-header">
-                    <h2 class="section-title"><i data-lucide="file-down"></i> Academic Downloads</h2>
-                </div>
-                <div class="resource-list" id="resources-container">
-                    <div class="empty-state">
-                        <i data-lucide="folder-open" size="32" style="margin-bottom: 10px; opacity: 0.3;"></i>
-                        <p>No files uploaded yet.</p>
-                    </div>
-                </div>
-            </div>
+    <script>
+        lucide.createIcons();
 
-            <!-- Activities -->
-            <div class="card">
-                <div class="section-header">
-                    <h2 class="section-title"><i data-lucide="calendar"></i> Upcoming Activities</h2>
-                </div>
-                <div id="activities-container">
-                    <div class="empty-state">
-                        <p>No upcoming events.</p>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Sidebar -->
-        <aside>
-            <div class="card profile-card">
-                <div class="avatar" id="student-initials">SJ</div>
-                <h3 id="student-name">Sarah Jane</h3>
-                <p id="student-details" style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 15px;">Form 4 East | Adm: 5542</p>
-                <div style="display: flex; justify-content: space-around; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                    <div>
-                        <p style="font-size: 0.7rem; opacity: 0.7;">Term GPA</p>
-                        <p style="font-weight: 700;">3.8</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.7rem; opacity: 0.7;">Attendance</p>
-                        <p style="font-weight: 700;">94%</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--school-navy);">Portal Navigation</h3>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <button class="nav-btn" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); background: none; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
-                        <i data-lucide="layout-dashboard" size="16"></i> Main Dashboard
-                    </button>
-                    <button class="nav-btn" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); background: none; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
-                        <i data-lucide="file-text" size="16"></i> Academic Performance
-                    </button>
-                    <button class="nav-btn" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); background: none; border-radius: 8px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem;">
-                        <i data-lucide="clock" size="16"></i> Daily Timetable
-                    </button>
-                </div>
-            </div>
-        </aside>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, onSnapshot, orderBy, limit, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global Config
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'nangina-portal';
-
-        let currentUser = null;
-
-        // Initialize App
-        async function init() {
-            lucide.createIcons();
-            
-            // Stylish Sign Out Logic
-            document.getElementById('signout-trigger').onclick = async () => {
-                const exitLoader = document.getElementById('exit-loader');
-                
-                // Trigger the exit animation
-                exitLoader.classList.add('active');
-                
-                // Brief pause to let the user see the stylish exit
-                setTimeout(async () => {
-                    try {
-                        await signOut(auth);
-                        // Redirect simulation
-                        window.location.href = 'index.html';
-                    } catch (err) {
-                        console.error("Signout Error", err);
-                        exitLoader.classList.remove('active');
-                    }
-                }, 1800);
-            };
-
-            // Auth State Listener
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUser = user;
-                    setupSubscriptions();
-                    // Artificial delay for entry loader
-                    setTimeout(() => {
-                        document.getElementById('page-loader').classList.add('loader-exit');
-                    }, 1500);
-                } else {
-                    signInAnonymously(auth);
-                }
-            });
-
-            toggleForm(); 
+        // 1. Logout Logic
+        function openLogoutModal() {
+            document.getElementById('logout-modal').style.display = 'flex';
         }
 
-        // --- Realtime Data Subscriptions ---
-        function setupSubscriptions() {
-            if (!currentUser) return;
-
-            // 1. Notices Subscription
-            const noticesRef = collection(db, 'artifacts', appId, 'public', 'data', 'notices');
-            onSnapshot(noticesRef, (snapshot) => {
-                const container = document.getElementById('student-notices');
-                if (snapshot.empty) return;
-                
-                container.innerHTML = '';
-                snapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    renderNotice(data);
-                });
-            }, (err) => console.error("Notices error", err));
-
-            // 2. Resources Subscription
-            const resourcesRef = collection(db, 'artifacts', appId, 'public', 'data', 'resources');
-            onSnapshot(resourcesRef, (snapshot) => {
-                const container = document.getElementById('resources-container');
-                if (snapshot.empty) return;
-                
-                container.innerHTML = '';
-                snapshot.docs.forEach(doc => {
-                    renderResource(doc.data());
-                });
-            }, (err) => console.error("Resources error", err));
-
-            // 3. Activities Subscription
-            const activitiesRef = collection(db, 'artifacts', appId, 'public', 'data', 'activities');
-            onSnapshot(activitiesRef, (snapshot) => {
-                const container = document.getElementById('activities-container');
-                if (snapshot.empty) return;
-                
-                container.innerHTML = '';
-                snapshot.docs.forEach(doc => {
-                    renderActivity(doc.data());
-                });
-            }, (err) => console.error("Activities error", err));
+        function closeLogoutModal() {
+            document.getElementById('logout-modal').style.display = 'none';
         }
 
-        // --- Render Helpers ---
-        function renderNotice(data) {
-            const container = document.getElementById('student-notices');
-            const div = document.createElement('div');
-            div.className = `notice-item ${data.priority === 'urgent' ? 'urgent' : ''}`;
-            div.innerHTML = `
-                <span class="notice-tag ${data.priority === 'urgent' ? 'tag-urgent' : 'tag-normal'}">${data.priority || 'Notice'}</span>
-                <h4 class="notice-title">${data.title}</h4>
-                <p class="notice-excerpt">${data.message}</p>
-                <div class="notice-meta">
-                    <span>Admin</span>
-                    <span>${data.date || 'Recent'}</span>
-                </div>
-            `;
-            container.prepend(div);
+        function executeLogout() {
+            window.location.href = 'login.html';
         }
 
-        function renderResource(data) {
-            const container = document.getElementById('resources-container');
-            const div = document.createElement('div');
-            div.className = 'resource-item';
-            div.innerHTML = `
-                <div class="resource-info">
-                    <div class="resource-icon"><i data-lucide="file-check"></i></div>
-                    <div>
-                        <p style="font-weight: 700; font-size: 0.9rem;">${data.title}</p>
-                        <p style="font-size: 0.7rem; color: var(--text-muted);">${data.subject}</p>
-                    </div>
-                </div>
-                <button class="download-btn" onclick="alert('Downloading...')"><i data-lucide="download" size="14"></i> Get File</button>
-            `;
-            container.appendChild(div);
-            lucide.createIcons();
-        }
-
-        function renderActivity(data) {
-            const container = document.getElementById('activities-container');
-            const div = document.createElement('div');
-            div.style.padding = '12px';
-            div.style.borderBottom = '1px solid var(--border-color)';
-            div.innerHTML = `
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <div style="background: var(--school-gold); color: var(--school-navy); padding: 5px 10px; border-radius: 8px; text-align: center; min-width: 50px;">
-                        <span style="display: block; font-size: 0.6rem; font-weight: 800; text-transform: uppercase;">${data.month || 'JUL'}</span>
-                        <span style="display: block; font-size: 1.1rem; font-weight: 800;">${data.day || '15'}</span>
-                    </div>
-                    <div>
-                        <h4 style="font-size: 0.9rem; font-weight: 700;">${data.title}</h4>
-                        <p style="font-size: 0.75rem; color: var(--text-muted);">${data.time || 'All Day'}</p>
-                    </div>
-                </div>
-            `;
-            container.appendChild(div);
-        }
-
-        // --- Admin Logic ---
-        window.toggleAdminModal = () => {
-            const modal = document.getElementById('admin-modal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-        };
-
-        window.toggleForm = () => {
-            const type = document.getElementById('post-type').value;
-            const content = document.getElementById('form-content');
-            
-            if (type === 'notice') {
-                content.innerHTML = `
-                    <div class="form-group"><label>Title</label><input id="f-title" placeholder="School Holiday Update"></div>
-                    <div class="form-group"><label>Message</label><textarea id="f-msg" rows="3"></textarea></div>
-                    <div class="form-group"><label>Priority</label><select id="f-priority"><option value="normal">Normal</option><option value="urgent">Urgent</option></select></div>
-                `;
-            } else if (type === 'resource') {
-                content.innerHTML = `
-                    <div class="form-group"><label>Resource Name</label><input id="f-title" placeholder="Physics Paper 2 Mid-term"></div>
-                    <div class="form-group"><label>Subject</label><input id="f-subject" placeholder="Physics"></div>
-                `;
-            } else if (type === 'activity') {
-                content.innerHTML = `
-                    <div class="form-group"><label>Event Name</label><input id="f-title" placeholder="Inter-school Debate"></div>
-                    <div class="form-group"><label>Month (e.g., SEP)</label><input id="f-month" placeholder="SEP"></div>
-                    <div class="form-group"><label>Day</label><input id="f-day" placeholder="24"></div>
-                `;
-            }
-        };
-
-        document.getElementById('save-post').onclick = async () => {
-            if (!currentUser) return;
-            const type = document.getElementById('post-type').value;
-            const payload = {
-                createdAt: serverTimestamp(),
-                author: currentUser.uid
-            };
-
+        // 2. Database Simulation
+        async function fetchStudentData() {
             try {
-                if (type === 'notice') {
-                    payload.title = document.getElementById('f-title').value;
-                    payload.message = document.getElementById('f-msg').value;
-                    payload.priority = document.getElementById('f-priority').value;
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'notices'), payload);
-                } else if (type === 'resource') {
-                    payload.title = document.getElementById('f-title').value;
-                    payload.subject = document.getElementById('f-subject').value;
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'resources'), payload);
-                } else if (type === 'activity') {
-                    payload.title = document.getElementById('f-title').value;
-                    payload.month = document.getElementById('f-month').value;
-                    payload.day = document.getElementById('f-day').value;
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'activities'), payload);
+                // Point this to your MongoDB API in production
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                const mongoData = {
+                    name: "", 
+                    class: "",
+                    rank: "",
+                    grade: "",
+                    performance: [],
+                    assignments: []
+                };
+
+                if (!mongoData.name) {
+                    document.getElementById('user-display-name').textContent = "Not loaded";
+                } else {
+                    updateUI(mongoData);
                 }
                 
-                toggleAdminModal();
-            } catch (err) {
-                console.error("Save error", err);
+                hideSplash();
+            } catch (error) {
+                console.error("Database Fetch Error:", error);
+                document.getElementById('user-display-name').textContent = "Error";
+                hideSplash();
             }
-        };
+        }
 
-        // Start
-        window.onload = init;
+        function hideSplash() {
+            document.getElementById('splash-screen').classList.add('hidden-splash');
+            document.body.classList.add('show-content');
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-' + viewId)?.classList.add('active');
+            document.getElementById('mobile-nav-' + viewId)?.classList.add('active');
+            document.querySelectorAll('.view-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+        }
+
+        fetchStudentData();
     </script>
 </body>
 </html>
